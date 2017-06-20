@@ -52,3 +52,5 @@ build-iPhoneSimulator/
 # Sublime
 *.sublime-project
 *.sublime-workspace
+
+.byebug_history
