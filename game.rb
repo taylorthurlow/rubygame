@@ -1,22 +1,25 @@
 # classes
 require_relative 'player'
+require_relative 'worldmap'
 
 # libraries
 require 'gosu'
 require 'gosu_tiled'
 require 'byebug'
 
-
 class GameWindow < Gosu::Window
   attr_accessor :buttons_down
 
-  MAP_FILE = 'maps/test.json'
-  UNIT_FILE = 'assets/mainguy.json'
+  WINDOW_WIDTH = 800
+  WINDOW_HEIGHT = 600
 
   def initialize
-    super(800, 600, false)
-    @map = Gosu::Tiled.load_json(self, MAP_FILE)
+    super(WINDOW_WIDTH, WINDOW_HEIGHT, false)
+    #@map = Gosu::Tiled.load_json(self, MAP_FILE)
+    @map = WorldMap.new(self)
     @x = @y = 0
+    @zoom = 1
+
     @speed = 2
     @first_render = true
     @buttons_down = 0
@@ -28,9 +31,8 @@ class GameWindow < Gosu::Window
   end
 
   def update
-    self.caption = "#{Gosu.fps} FPS"
+    self.caption = 'some stupid ruby game'
     handle_keyboard
-
     @player.update
   end
 
@@ -77,12 +79,22 @@ class GameWindow < Gosu::Window
   end
 
   def draw
-    @first_render = false
     @map.draw(@x, @y)
 
+
+    player_info = "Player: (#{@x + (WINDOW_WIDTH / 2)}, #{@y + (WINDOW_HEIGHT / 2)})"
     @font.draw("Direction: #{@player.direction}", 0, 0, 0, 1, 1, Gosu::Color::GREEN)
+    @font.draw("FPS: #{Gosu.fps}", 0, 20, 0, 1, 1, Gosu::Color::GREEN)
+    @font.draw(player_info, 0, 40, 0, 1, 1, Gosu::Color::GREEN)
+    @font.draw(memory_usage, 0, 60, 0, 1, 1, Gosu::Color::GREEN)
 
     @player.draw
+  end
+
+  def memory_usage
+    `ps -o rss= -p #{Process.pid}`.chomp.gsub(/(\d)(?=(\d{3})+(\..*)?$)/,'\1,') + ' KB'
+    rescue
+    "Unavailable. Using Windows?"
   end
 end
 

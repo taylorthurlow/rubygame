@@ -6,8 +6,6 @@ class Player
   FRAME_DELAY = 50 #milliseconds
 
   def initialize(window)
-    @x = window.width / 2
-    @y = window.height / 2
     @window = window
 
     @anims = load_animation
@@ -24,6 +22,10 @@ class Player
   def update
     @current_frame += 1 if frame_expired?
   end
+
+  ####
+  # movement and position
+  ####
 
   def is_moving?
     if @window.buttons_down > 0
@@ -42,7 +44,7 @@ class Player
   def draw
     if is_moving? or @stopped_moving
       image = @stopped_moving ? get_animation[1] : get_animation[@current_frame % 3]
-      image.draw(@x - image.width / 2.0, @y - image.width / 2.0, 1)
+      image.draw(@window.width / 2, @window.height / 2, 1)
       @stopped_moving = false
     end
   end
