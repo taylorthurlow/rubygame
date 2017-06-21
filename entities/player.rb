@@ -5,9 +5,8 @@ class Player
 
   FRAME_DELAY = 50 #milliseconds
 
-  def initialize(window)
-    @window = window
-
+  def initialize(play_state)
+    @play_state = play_state
     @anims = load_animation
     @current_frame = 0
 
@@ -28,7 +27,7 @@ class Player
   ####
 
   def is_moving?
-    if @window.buttons_down > 0
+    if @play_state.buttons_down > 0
       @stopped_moving = false
       return true
     else
@@ -41,10 +40,14 @@ class Player
   # graphics
   ####
 
+  def needs_redraw?
+    return frame_expired?
+  end
+
   def draw
     if is_moving? or @stopped_moving
       image = @stopped_moving ? get_animation[1] : get_animation[@current_frame % 3]
-      image.draw(@window.width / 2, @window.height / 2, 1)
+      image.draw($window.width / 2, $window.height / 2, 1)
       @stopped_moving = false
     end
   end
@@ -61,7 +64,7 @@ class Player
   end
 
   def load_animation
-    return Gosu::Image.load_tiles(@window, 'assets/mainguy.png', 16, 16, false)
+    return Gosu::Image.load_tiles($window, 'assets/mainguy.png', 16, 16, false)
   end
 
   def get_animation
