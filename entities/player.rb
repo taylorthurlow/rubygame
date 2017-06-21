@@ -1,7 +1,7 @@
 require 'gosu'
 
 class Player
-  attr_accessor :pos_x, :pos_y, :direction
+  attr_accessor :pos_x, :pos_y, :direction, :speed
 
   FRAME_DELAY = 50 #milliseconds
 
@@ -10,18 +10,31 @@ class Player
     @anims = load_animation
     @current_frame = 0
 
-    @pos_x = 20 * 16
-    @pos_y = 20 * 16
+    @pos_x = 30 * 16
+    @pos_y = 30 * 16
     @direction = :down
     @stopped_moving = true
+    @speed = 2
   end
 
   ####
   # logic
   ####
 
-  def update
+  def update(camera)
     @current_frame += 1 if frame_expired?
+
+    puts @speed
+
+    new_pos_x, new_pos_y = @pos_x, @pos_y
+    new_pos_y -= @speed if $window.button_down?(Gosu::KbW)
+    new_pos_x -= @speed if $window.button_down?(Gosu::KbA)
+    new_pos_y += @speed if $window.button_down?(Gosu::KbS)
+    new_pos_x += @speed if $window.button_down?(Gosu::KbD)
+
+    if @play_state.map.can_move_to?(new_pos_x, new_pos_y)
+      @pos_x, @pos_y = new_pos_x, new_pos_y
+    end
   end
 
   ####
@@ -92,7 +105,9 @@ class Player
   def draw
     if is_moving? or @stopped_moving
       image = @stopped_moving ? get_animation[1] : get_animation[@current_frame % 3]
-      image.draw($window.width / 2 - 8, $window.height / 2 - 8, 1)
+      draw_x = @pos_x# - @play_state.camera.pos_x
+      draw_y = @pos_y# - @play_state.camera.pos_y
+      image.draw(draw_x, draw_y, 1)
       @stopped_moving = false
     end
 
