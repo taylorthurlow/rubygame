@@ -1,11 +1,16 @@
+GIT
+  remote: https://github.com/dkniffin/gosu-tiled.git
+  revision: 8a03e3fb7469cb953cfe684216d1b40c97bd1fe4
+  specs:
+    gosu_tiled (0.1.1)
+      gosu
+      json
+
 GEM
   remote: https://rubygems.org/
   specs:
     byebug (9.0.6)
     gosu (0.12.1)
-    gosu_tiled (0.1.1)
-      gosu
-      json
     json (2.1.0)
     rmagick (2.16.0)
 
@@ -15,7 +20,7 @@ PLATFORMS
 DEPENDENCIES
   byebug
   gosu
-  gosu_tiled
+  gosu_tiled!
   rmagick
 
 RUBY VERSION

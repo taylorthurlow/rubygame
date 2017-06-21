@@ -2,19 +2,16 @@ require 'gosu'
 require_relative '../entities/player'
 
 class PlayState
-  attr_accessor :buttons_down
+  attr_accessor :buttons_down, :x, :y
 
   def initialize
-    @map = WorldMap.new
-    @player = Player.new(self)
-
     @x = @y = 0
-    @zoom = 1
-
     @speed = 2
     @buttons_down = 1 # start at 1 because the main menu key registers as a button_up but not down
-
     @font = Gosu::Font.new($window, Gosu.default_font_name, 20)
+
+    @map = WorldMap.new
+    @player = Player.new(self)
   end
 
   def enter
@@ -26,14 +23,36 @@ class PlayState
   def update
     handle_keyboard
     @player.update
-    puts @buttons_down
   end
 
   def handle_keyboard
-    @x -= @speed if $window.button_down?(Gosu::KbA)
-    @x += @speed if $window.button_down?(Gosu::KbD)
-    @y -= @speed if $window.button_down?(Gosu::KbW)
-    @y += @speed if $window.button_down?(Gosu::KbS)
+    if $window.button_down?(Gosu::KbW)
+      tile_above_x, tile_above_y = @player.tile_above
+      if @map.can_move_to?(tile_above_x, tile_above_y)
+        @player.pos_y -= @speed
+      end
+    end
+
+    if $window.button_down?(Gosu::KbA)
+      tile_left_x, tile_left_y = @player.tile_left
+      if @map.can_move_to?(tile_left_x, tile_left_y)
+        @player.pos_x -= @speed
+      end
+    end
+
+    if $window.button_down?(Gosu::KbS)
+      tile_below_x, tile_below_y = @player.tile_below
+      if @map.can_move_to?(tile_below_x, tile_below_y)
+        @player.pos_y += @speed
+      end
+    end
+
+    if $window.button_down?(Gosu::KbD)
+      tile_right_x, tile_right_y = @player.tile_right
+      if @map.can_move_to?(tile_right_x, tile_right_y)
+        @player.pos_x += @speed
+      end
+    end
   end
 
   def button_down(id)
@@ -66,15 +85,23 @@ class PlayState
   end
 
   def draw
-    @map.draw(@x, @y)
+    camera_x = @player.pos_x - $window.width / 2
+    camera_y = @player.pos_y - $window.height / 2
+
+    @map.draw(camera_x, camera_y)
     @player.draw
 
-    player_info = "Player: (#{@x + ($window.width / 2)}, #{@y + ($window.height / 2)})"
-    @font.draw("Direction: #{@player.direction}", 0, 0, 0, 1, 1, Gosu::Color::GREEN)
-    @font.draw("FPS: #{Gosu.fps}", 0, 20, 0, 1, 1, Gosu::Color::GREEN)
-    @font.draw(player_info, 0, 40, 0, 1, 1, Gosu::Color::GREEN)
-    @font.draw("Moving: #{@player.is_moving?}, buttons: #{@buttons_down}", 0, 60, 0, 1, 1, Gosu::Color::GREEN)
-    @font.draw($window.memory_usage, 0, 80, 0, 1, 1, Gosu::Color::GREEN)
+    tile_facing = @player.tile_facing
+    facing_ids = @map.tiles_at(tile_facing[0], tile_facing[1])
+    can_move = @map.can_move_to?(tile_facing[0], tile_facing[1])
+    player_info = "Player: #{@player.tile_pos_x}, #{@player.tile_pos_y} (#{@player.pos_x}, #{@player.pos_y})"
+    @font.draw("Direction: #{@player.direction}", 0, 0, 0, 1, 1, Gosu::Color::YELLOW)
+    @font.draw("FPS: #{Gosu.fps}", 0, 20, 0, 1, 1, Gosu::Color::YELLOW)
+    @font.draw("Camera: #{camera_x}, #{camera_y}", 0, 40, 0, 1, 1, Gosu::Color::YELLOW)
+    @font.draw(player_info, 0, 60, 0, 1, 1, Gosu::Color::YELLOW)
+    @font.draw("Moving: #{@player.is_moving?}, buttons: #{@buttons_down}", 0, 80, 0, 1, 1, Gosu::Color::YELLOW)
+    @font.draw($window.memory_usage, 0, 100, 0, 1, 1, Gosu::Color::YELLOW)
+    @font.draw("Facing: #{facing_ids} (#{tile_facing[0]}, #{tile_facing[1]}), Collidable: #{!@map.can_move_to?(tile_facing[0], tile_facing[1])}", 0, 120, 0, 1, 1, Gosu::Color::YELLOW)
 
   end
 
