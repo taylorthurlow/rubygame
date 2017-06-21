@@ -1,6 +1,6 @@
 # classes
-require_relative 'player'
-require_relative 'worldmap'
+require_relative 'Player'
+require_relative 'WorldMap'
 
 # libraries
 require 'gosu'
