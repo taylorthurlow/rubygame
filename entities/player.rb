@@ -14,7 +14,7 @@ class Player
     @pos_y = 30 * 16
     @direction = :down
     @stopped_moving = true
-    @speed = 2
+    @speed = 4
   end
 
   ####
@@ -23,16 +23,14 @@ class Player
 
   def update(camera)
     @current_frame += 1 if frame_expired?
-
-    puts @speed
-
+    
     new_pos_x, new_pos_y = @pos_x, @pos_y
     new_pos_y -= @speed if $window.button_down?(Gosu::KbW)
     new_pos_x -= @speed if $window.button_down?(Gosu::KbA)
     new_pos_y += @speed if $window.button_down?(Gosu::KbS)
     new_pos_x += @speed if $window.button_down?(Gosu::KbD)
 
-    if @play_state.map.can_move_to?(new_pos_x, new_pos_y)
+    if @play_state.map.can_move_to?(new_pos_x / 16, new_pos_y / 16)
       @pos_x, @pos_y = new_pos_x, new_pos_y
     end
   end
@@ -105,28 +103,12 @@ class Player
   def draw
     if is_moving? or @stopped_moving
       image = @stopped_moving ? get_animation[1] : get_animation[@current_frame % 3]
-      draw_x = @pos_x# - @play_state.camera.pos_x
-      draw_y = @pos_y# - @play_state.camera.pos_y
-      image.draw(draw_x, draw_y, 1)
+      image.draw(@pos_x - 8, @pos_y - 8, 1)
       @stopped_moving = false
     end
-
-    draw_select_highlight
   end
 
   private
-
-  def draw_select_highlight
-    tile_x, tile_y = tile_facing
-    draw_x = tile_x * 16 - @pos_x + $window.width / 2
-    draw_y = tile_y * 16 - @pos_y + $window.height / 2
-
-    Gosu.draw_rect(draw_x, draw_y, 16, 16, Gosu::Color::GREEN, 2)
-
-    # crosshair center of screen for alignment
-    # Gosu.draw_rect(800 / 2, 0, 1, 600, Gosu::Color::RED, 2)
-    # Gosu.draw_rect(0, 600 / 2, 800, 1, Gosu::Color::RED, 2)
-  end
 
   def frame_expired?
     now = Gosu.milliseconds

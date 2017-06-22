@@ -1,50 +1,65 @@
 require 'gosu'
+require 'json'
 
 class WorldMap
+  attr_accessor :data
 
   def initialize
-    @map = Gosu::Tiled.load_json($window, 'maps/test.json')
-    @map_width = @map.width / 16
-    @map_height = @map.height / 16
+    @data = parse_map_json('maps/test.json')
+    @images = Gosu::Image.load_tiles($window, 'assets/basictiles.png', 16, 16, true)
+  end
 
-    @collider_ids = []
-    256.times do |i|
-      unless @map.tilesets.properties(i).nil? or @map.tilesets.properties(i).empty?
-        # debugger
-        @collider_ids << i if @map.tilesets.properties(i)['Collision'] == 'true'
+  def parse_map_json(path)
+    map_file = File.read(path)
+    data_hash = JSON.parse(map_file)
+
+    data = {
+      width:      data_hash['width'],
+      height:     data_hash['height'],
+      tile_size:  data_hash['tileheight'],
+      colliders:  [],
+      tiles:      {}
+    }
+
+    # initialize layer hash with names
+    data_hash['layers'].each do |layer|
+      data[:tiles][layer['name'].to_sym] = []
+    end
+
+    # iterate layers in map, fill in data to tiles hash
+    data_hash['layers'].each do |layer|
+      tile_array = layer['data'].each_slice(data[:width]).map {|t| t}
+      data[:tiles][layer['name'].to_sym] = tile_array
+    end
+
+    # get colliding tiles
+    data_hash['tilesets'].first['tileproperties'].each do |tile|
+      tile_id = tile[0].to_i
+      properties = tile[1]
+      collider = properties['Collision']
+      data[:colliders] << tile_id if !collider.nil? and collider == 'true'
+    end
+    data[:colliders].sort
+
+    return data
+  end
+
+  def draw(camera)
+    @data[:tiles].each do |layer, data|
+      data.each_with_index do |row, y|
+        row.each_with_index do |col, x|
+          # puts "drawing #{col} from #{layer.to_s} at (#{x}, #{y})" if col != 0
+          pos_x = x * @data[:tile_size]
+          pos_y = y * @data[:tile_size]
+          #if camera.can_view?(pos_x, pos_y)
+            @images[col-1].draw(pos_x, pos_y, 0)
+          #end
+        end
       end
     end
-
-    puts @collider_ids
   end
 
-  def draw(pos_x, pos_y)
-    @map.draw(pos_x, pos_y)
-  end
-
-  # def can_move_to?(tile_pos_x, tile_pos_y)
-  #   tiles = tiles_at(tile_pos_x, tile_pos_y)
-
-  #   found_nonzero_tile = false
-  #   top_nonzero_tile = nil
-  #   tiles.reverse.each do |tile|
-  #     break unless top_nonzero_tile.nil?
-  #     top_nonzero_tile = tile if tile != 0
-  #   end
-
-  #   if top_nonzero_tile.nil?
-  #     return false
-  #   else
-  #     return !collidable?(top_nonzero_tile)
-  #   end
-  # end
-
-  def can_move_to?(pos_x, pos_y, tile=false)
-    if tile
-      pos_x *= 16
-      pos_y *= 16
-    end
-
+  def can_move_to?(pos_x, pos_y)
     tnzt = get_top_nonzero_tile(pos_x, pos_y)
     if tnzt.nil?
       return false
@@ -53,43 +68,26 @@ class WorldMap
     end
   end
 
-  def get_top_nonzero_tile(pos_x, pos_y, tile=false)
-    tiles = tiles_at(pos_x, pos_y)
-    found_nonzero_tile = false
-    top_nonzero_tile = nil
-    tiles.reverse.each do |tile|
-      break unless top_nonzero_tile.nil?
-      top_nonzero_tile = tile if tile != 0
+  def get_top_nonzero_tile(pos_x, pos_y)
+    tnzt = nil
+    tiles_at(pos_x, pos_y).each do |tile|
+      tnzt = tile if tile != 0
     end
-
-    return top_nonzero_tile
+    
+    return tnzt
   end
   
-  # def tiles_at(tile_pos_x, tile_pos_y)
-  #   tiles = []
-  #   @map.data['layers'].each do |layer|
-  #     if layer['type'] == 'tilelayer'
-  #       offset = tile_pos_y * @map_width + tile_pos_x
-  #       tiles << layer['data'][offset]
-  #     end
-  #   end
-  #   return tiles;
-  # end
-  
-  def tiles_at(pos_x, pos_y, tile=false)
+  def tiles_at(pos_x, pos_y)
     tiles = []
-    @map.data['layers'].each do |layer|
-      if layer['type'] == 'tilelayer'
-        offset = (pos_y / 16) * @map_width    # row
-        offset += (pos_x / 16) - (pos_x % 16) # column
-        tiles << layer['data'][offset]
-      end
+    @data[:tiles].each do |layer, data|
+      tiles << data[pos_y][pos_x]
     end
-    return tiles;
+
+    return tiles
   end
 
   def collidable?(id)
-    return @collider_ids.include?(id)
+    return @data[:colliders].include?(id - 1)
   end
 
 end
