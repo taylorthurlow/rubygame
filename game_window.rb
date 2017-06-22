@@ -4,7 +4,6 @@ require_relative 'world_map'
 
 # libraries
 require 'gosu'
-require 'gosu_tiled'
 require 'byebug'
 
 class GameWindow < Gosu::Window
