@@ -1,12 +1,13 @@
 require 'gosu'
 require 'json'
+require_relative 'entities/tile'
+Dir[File.dirname(__FILE__) + '/entities/tiles/*.rb'].each {|f| require f}
 
 class WorldMap
-  attr_accessor :data
+  attr_accessor :data, :tile_sprites
 
   def initialize
     @data = parse_map_json('maps/test.json')
-    @images = Gosu::Image.load_tiles($window, 'assets/basictiles.png', 16, 16, true)
   end
 
   def parse_map_json(path)
@@ -28,7 +29,13 @@ class WorldMap
 
     # iterate layers in map, fill in data to tiles hash
     data_hash['layers'].each do |layer|
-      tile_array = layer['data'].each_slice(data[:width]).map {|t| t}
+      tile_id_array = layer['data'].each_slice(data[:width]).map {|t| t}
+
+      tile_array = []
+      tile_id_array.each do |row|
+        tile_array << row.map {|t| Tile.factory(t)}
+      end
+
       data[:tiles][layer['name'].to_sym] = tile_array
     end
 
@@ -47,12 +54,13 @@ class WorldMap
   def draw(camera)
     @data[:tiles].each do |layer, data|
       data.each_with_index do |row, y|
-        row.each_with_index do |col, x|
-          # puts "drawing #{col} from #{layer.to_s} at (#{x}, #{y})" if col != 0
+        row.each_with_index do |tile, x|
           pos_x = x * @data[:tile_size]
           pos_y = y * @data[:tile_size]
           #if camera.can_view?(pos_x, pos_y)
-            @images[col-1].draw(pos_x, pos_y, 0)
+            tile.draw(pos_x, pos_y)
+            tile.pos_x, tile.pos_y = pos_x / 16, pos_y / 16
+            #@tile_sprites[col-1].draw(pos_x, pos_y, 0)
           #end
         end
       end
@@ -61,17 +69,13 @@ class WorldMap
 
   def can_move_to?(pos_x, pos_y)
     tnzt = get_top_nonzero_tile(pos_x, pos_y)
-    if tnzt.nil?
-      return false
-    else
-      return !collidable?(tnzt)
-    end
+    return tnzt.nil? ? false : tnzt.traversible?
   end
 
   def get_top_nonzero_tile(pos_x, pos_y)
     tnzt = nil
     tiles_at(pos_x, pos_y).each do |tile|
-      tnzt = tile if tile != 0
+      tnzt = tile if tile.id != 0
     end
     
     return tnzt

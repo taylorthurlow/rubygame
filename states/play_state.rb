@@ -71,23 +71,18 @@ class PlayState
     end
 
     tile_facing = @player.tile_facing
-    facing_ids = @map.tiles_at(tile_facing[0], tile_facing[1])
-    can_move = @map.can_move_to?(tile_facing[0], tile_facing[1])
-    player_info = "Player: #{@player.tile_pos_x}, #{@player.tile_pos_y} (#{@player.pos_x}, #{@player.pos_y})"
+    player_info = "Player: #{@player.tile_pos_x}, #{@player.tile_pos_y} (#{@player.pos_x}, #{@player.pos_y}), Direction: #{@player.direction}"
 
-    @font.draw("Direction: #{@player.direction}", 0, 0, 0, 1, 1, Gosu::Color::YELLOW)
-    @font.draw("FPS: #{Gosu.fps}", 0, 20, 0, 1, 1, Gosu::Color::YELLOW)
+    @font.draw("FPS: #{Gosu.fps}", 0, 0, 0, 1, 1, Gosu::Color::YELLOW)
+    @font.draw($window.memory_usage, 0, 20, 0, 1, 1, Gosu::Color::YELLOW)
     @font.draw("Camera: #{@camera.pos_x}, #{@camera.pos_y}", 0, 40, 0, 1, 1, Gosu::Color::YELLOW)
     @font.draw(player_info, 0, 60, 0, 1, 1, Gosu::Color::YELLOW)
-    @font.draw("Moving: #{@player.is_moving?}, buttons: #{@buttons_down}", 0, 80, 0, 1, 1, Gosu::Color::YELLOW)
-    @font.draw($window.memory_usage, 0, 100, 0, 1, 1, Gosu::Color::YELLOW)
-    @font.draw("Facing: #{facing_ids} (#{tile_facing[0]}, #{tile_facing[1]})", 0, 120, 0, 1, 1, Gosu::Color::YELLOW)
-    @font.draw("Next tile traversible?: #{@map.can_move_to?(tile_facing[0], tile_facing[1])}", 0, 140, 0, 1, 1, Gosu::Color::YELLOW)
-    @font.draw("Top Non-zero Tile: #{@map.get_top_nonzero_tile(tile_facing[0], tile_facing[1])}", 0, 160, 0, 1, 1, Gosu::Color::YELLOW)
+    @font.draw("Facing: #{@player.tiles_facing.map {|t| t.id}}, #{tile_facing.to_s}", 0, 80, 0, 1, 1, Gosu::Color::YELLOW)
   end
 
   def draw_select_highlight
-    tile_x, tile_y = @player.tile_facing
+    tile = @player.tile_facing
+    tile_x, tile_y = tile.pos_x, tile.pos_y
     draw_x = tile_x * 16
     draw_y = tile_y * 16
 

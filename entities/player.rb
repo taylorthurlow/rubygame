@@ -7,6 +7,8 @@ class Player
 
   def initialize(play_state)
     @play_state = play_state
+    @map = @play_state.map
+
     @anims = load_animation
     @current_frame = 0
 
@@ -30,7 +32,7 @@ class Player
     new_pos_y += @speed if $window.button_down?(Gosu::KbS)
     new_pos_x += @speed if $window.button_down?(Gosu::KbD)
 
-    if @play_state.map.can_move_to?(new_pos_x / 16, new_pos_y / 16)
+    if @map.can_move_to?(new_pos_x / 16, new_pos_y / 16)
       @pos_x, @pos_y = new_pos_x, new_pos_y
     end
   end
@@ -47,9 +49,9 @@ class Player
     return @pos_y / 16
   end
 
-  def tile_facing
+  def tiles_facing
     x, y = tile_pos_x, tile_pos_y
-    
+
     case direction
     when :up
       y -= 1
@@ -61,7 +63,11 @@ class Player
       x += 1
     end
 
-    return [x, y]
+    return @map.tiles_at(x, y)
+  end
+
+  def tile_facing
+    return @map.get_top_nonzero_tile(tiles_facing.last.pos_x, tiles_facing.last.pos_y)
   end
 
   def tile_above; [tile_pos_x, tile_pos_y - 1] end
