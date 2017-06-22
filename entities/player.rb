@@ -14,7 +14,7 @@ class Player
     @pos_y = 30 * 16
     @direction = :down
     @stopped_moving = true
-    @speed = 4
+    @speed = 2
   end
 
   ####
