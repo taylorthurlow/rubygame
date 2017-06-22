@@ -16,8 +16,7 @@ class Camera
 
   def can_view?(pos_x, pos_y)
     x0, x1, y0, y1 = viewport
-    seen = (x0 - 16..x1).include?(pos_x) && (y0 - 16..y1).include?(y)
-    return seen
+    return (x0 - 16..x1).include?(pos_x) && (y0 - 16..y1).include?(pos_y)
   end
 
   private
@@ -27,5 +26,6 @@ class Camera
     x1 = @pos_x + ($window.width / 2) / @zoom
     y0 = @pos_y - ($window.height / 2) / @zoom
     y1 = @pos_y + ($window.height / 2) / @zoom
+    return [x0, x1, y0, y1]
   end
 end

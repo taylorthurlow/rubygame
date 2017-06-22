@@ -11,6 +11,7 @@ GEM
       method_source (~> 0.8.1)
       slop (~> 3.4)
     rmagick (2.16.0)
+    ruby-prof (0.16.2)
     slop (3.6.0)
 
 PLATFORMS
@@ -22,6 +23,7 @@ DEPENDENCIES
   json
   pry
   rmagick
+  ruby-prof
 
 RUBY VERSION
    ruby 2.3.1p112

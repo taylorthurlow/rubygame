@@ -24,6 +24,9 @@ class PlayState
   def update
     @player.update(@camera)
     @camera.update
+
+    # debug stuff
+    @tiles_facing = @player.tiles_facing
   end
 
   def button_down(id)
@@ -70,14 +73,13 @@ class PlayState
       end
     end
 
-    tile_facing = @player.tile_facing
-    player_info = "Player: #{@player.tile_pos_x}, #{@player.tile_pos_y} (#{@player.pos_x}, #{@player.pos_y}), Direction: #{@player.direction}"
+    player_info = "Player: #{@player.x}, #{@player.y} (#{@player.pos_x}, #{@player.pos_y}), Direction: #{@player.direction}"
 
     @font.draw("FPS: #{Gosu.fps}", 0, 0, 0, 1, 1, Gosu::Color::YELLOW)
     @font.draw($window.memory_usage, 0, 20, 0, 1, 1, Gosu::Color::YELLOW)
     @font.draw("Camera: #{@camera.pos_x}, #{@camera.pos_y}", 0, 40, 0, 1, 1, Gosu::Color::YELLOW)
     @font.draw(player_info, 0, 60, 0, 1, 1, Gosu::Color::YELLOW)
-    @font.draw("Facing: #{@player.tiles_facing.map {|t| t.id}}, #{tile_facing.to_s}", 0, 80, 0, 1, 1, Gosu::Color::YELLOW)
+    @font.draw("Facing: #{@tiles_facing.map {|t| t.id}}, #{@tiles_facing.last.to_s}", 0, 80, 0, 1, 1, Gosu::Color::YELLOW)
   end
 
   def draw_select_highlight

@@ -41,39 +41,40 @@ class Player
   # movement and position
   ####
 
-  def tile_pos_x
-    return @pos_x / 16
-  end
+  def x; @pos_x / 16 end
+  def y; @pos_y / 16 end
 
-  def tile_pos_y
-    return @pos_y / 16
-  end
-
-  def tiles_facing
-    x, y = tile_pos_x, tile_pos_y
+  def coord_facing
+    facing_x, facing_y = x, y
 
     case direction
     when :up
-      y -= 1
+      facing_y -= 1
     when :left
-      x -= 1
+      facing_x -= 1
     when :down
-      y += 1
+      facing_y += 1
     when :right
-      x += 1
+      facing_x += 1
     end
 
-    return @map.tiles_at(x, y)
+    return facing_x, facing_y
   end
 
   def tile_facing
-    return @map.get_top_nonzero_tile(tiles_facing.last.pos_x, tiles_facing.last.pos_y)
+    coord = coord_facing
+    return @map.tile_at(coord[0], coord[1])
   end
 
-  def tile_above; [tile_pos_x, tile_pos_y - 1] end
-  def tile_left; [tile_pos_x - 1, tile_pos_y] end
-  def tile_below; [tile_pos_x, tile_pos_y + 1] end
-  def tile_right; [tile_pos_x + 1, tile_pos_y] end
+  def tiles_facing
+    coord = coord_facing
+    return @map.tiles_at(coord[0], coord[1])
+  end
+
+  def tile_above; [x, y - 1] end
+  def tile_left;  [x - 1, y] end
+  def tile_below; [x, y + 1] end
+  def tile_right; [x + 1, y] end
 
   def is_moving?
     if any_button_down?(Gosu::KbW, Gosu::KbA, Gosu::KbS, Gosu::KbD)

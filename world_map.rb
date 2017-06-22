@@ -18,7 +18,6 @@ class WorldMap
       width:      data_hash['width'],
       height:     data_hash['height'],
       tile_size:  data_hash['tileheight'],
-      colliders:  [],
       tiles:      {}
     }
 
@@ -39,59 +38,52 @@ class WorldMap
       data[:tiles][layer['name'].to_sym] = tile_array
     end
 
-    # get colliding tiles
-    data_hash['tilesets'].first['tileproperties'].each do |tile|
-      tile_id = tile[0].to_i
-      properties = tile[1]
-      collider = properties['Collision']
-      data[:colliders] << tile_id if !collider.nil? and collider == 'true'
-    end
-    data[:colliders].sort
-
     return data
   end
 
   def draw(camera)
+
     @data[:tiles].each do |layer, data|
       data.each_with_index do |row, y|
+
         row.each_with_index do |tile, x|
           pos_x = x * @data[:tile_size]
           pos_y = y * @data[:tile_size]
-          #if camera.can_view?(pos_x, pos_y)
+
+          if tile.id != 0# and camera.can_view?(pos_x, pos_y)
             tile.draw(pos_x, pos_y)
-            tile.pos_x, tile.pos_y = pos_x / 16, pos_y / 16
-            #@tile_sprites[col-1].draw(pos_x, pos_y, 0)
-          #end
+          else
+            tile.drawn = false
+          end
+
+          tile.pos_x, tile.pos_y = x, y
         end
       end
     end
   end
 
-  def can_move_to?(pos_x, pos_y)
-    tnzt = get_top_nonzero_tile(pos_x, pos_y)
+  def can_move_to?(x, y)
+    tnzt = get_top_nonzero_tile(x, y)
     return tnzt.nil? ? false : tnzt.traversible?
   end
 
-  def get_top_nonzero_tile(pos_x, pos_y)
+  def get_top_nonzero_tile(x, y)
     tnzt = nil
-    tiles_at(pos_x, pos_y).each do |tile|
+    tiles_at(x, y).each do |tile|
       tnzt = tile if tile.id != 0
     end
     
     return tnzt
   end
-  
-  def tiles_at(pos_x, pos_y)
-    tiles = []
-    @data[:tiles].each do |layer, data|
-      tiles << data[pos_y][pos_x]
+
+  def tile_at(x, y)
+    @data[:tiles].reverse_each do |layer, data|
+      return data[y][x] if data[y][x].id != 0
     end
-
-    return tiles
   end
-
-  def collidable?(id)
-    return @data[:colliders].include?(id - 1)
+  
+  def tiles_at(x, y)
+    tiles = @data[:tiles].map {|layer, data| data[y][x]}
+    return tiles.reject {|t| t.id == 0}
   end
-
 end

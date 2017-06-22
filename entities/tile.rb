@@ -1,7 +1,7 @@
 require 'gosu'
 
 class Tile < Gosu::Image
-  attr_accessor :id, :name, :pos_x, :pos_y
+  attr_accessor :id, :name, :pos_x, :pos_y, :drawn
 
   def initialize(id)
     @@tile_sprites ||= Tile.get_tile_sprites
@@ -25,9 +25,11 @@ class Tile < Gosu::Image
 
   def self.factory(id)
     case id
+    when 0; return TileEmpty.new(id)
     when 12, 13, 65, 66; return TileGrass.new(id)
     when 9, 10, 11, 17, 18; return TileGround.new(id)
-    when 14, 30, 38; return TileWater.new(id)
+    when 14; return TileWater.new(id)
+    when 30, 38; return TileWaves.new(id)
     end
 
     return Tile.new(id)

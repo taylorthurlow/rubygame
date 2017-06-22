@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+gem 'ruby-prof'
 gem 'gosu'
 gem 'json'
 gem 'rmagick'
