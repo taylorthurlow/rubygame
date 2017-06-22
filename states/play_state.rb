@@ -92,10 +92,6 @@ class PlayState
     draw_y = tile_y * 16
 
     Gosu.draw_rect(draw_x, draw_y, 16, 16, Gosu::Color::GREEN, 2)
-
-    # crosshair center of screen for alignment
-    # Gosu.draw_rect(@player.pos_x, 0, 1, $window.height, Gosu::Color::RED, 2)
-    # Gosu.draw_rect(0, @player.pos_y, $window.width, 1, Gosu::Color::RED, 2)
   end
 
   def needs_redraw?

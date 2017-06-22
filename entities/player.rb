@@ -48,9 +48,8 @@ class Player
   end
 
   def tile_facing
-    x = tile_pos_x
-    y = tile_pos_y
-
+    x, y = tile_pos_x, tile_pos_y
+    
     case direction
     when :up
       y -= 1
@@ -65,24 +64,13 @@ class Player
     return [x, y]
   end
 
-  def tile_above
-    return [tile_pos_x, tile_pos_y - 1]
-  end
-
-  def tile_left
-    return [tile_pos_x - 1, tile_pos_y]
-  end
-
-  def tile_below
-    return [tile_pos_x, tile_pos_y + 1]
-  end
-
-  def tile_right
-    return [tile_pos_x + 1, tile_pos_y]
-  end
+  def tile_above; [tile_pos_x, tile_pos_y - 1] end
+  def tile_left; [tile_pos_x - 1, tile_pos_y] end
+  def tile_below; [tile_pos_x, tile_pos_y + 1] end
+  def tile_right; [tile_pos_x + 1, tile_pos_y] end
 
   def is_moving?
-    if @play_state.buttons_down > 0
+    if any_button_down?(Gosu::KbW, Gosu::KbA, Gosu::KbS, Gosu::KbD)
       @stopped_moving = false
       return true
     else
@@ -96,7 +84,6 @@ class Player
   ####
 
   def needs_redraw?
-    return true
     return frame_expired?
   end
 
@@ -109,6 +96,14 @@ class Player
   end
 
   private
+
+  def any_button_down?(*buttons)
+    buttons.each do |b|
+      return true if $window.button_down?(b)
+    end
+
+    return false
+  end
 
   def frame_expired?
     now = Gosu.milliseconds
