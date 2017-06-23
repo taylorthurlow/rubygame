@@ -2,7 +2,9 @@ require 'gosu'
 require_relative '../entities/player'
 require_relative '../entities/camera'
 
-class PlayState
+require 'ruby-prof'
+
+class PlayState < GameState
   attr_accessor :buttons_down, :x, :y, :map, :camera
 
   def initialize
@@ -16,9 +18,11 @@ class PlayState
   end
 
   def enter
+    RubyProf.start
   end
 
   def leave
+    RubyProf::FlatPrinter.new(RubyProf.stop).print(STDOUT)
   end
 
   def update
@@ -27,6 +31,7 @@ class PlayState
 
     # debug stuff
     @tiles_facing = @player.tiles_facing
+    @tile_facing = @player.tile_facing
   end
 
   def button_down(id)
@@ -39,6 +44,8 @@ class PlayState
       @player.direction = :down
     when Gosu::KbD
       @player.direction = :right
+    when Gosu::KbQ
+      GameState.switch(MenuState.instance)
     when Gosu::KbEscape
       $window.close
     end
@@ -79,7 +86,7 @@ class PlayState
     @font.draw($window.memory_usage, 0, 20, 0, 1, 1, Gosu::Color::YELLOW)
     @font.draw("Camera: #{@camera.pos_x}, #{@camera.pos_y}", 0, 40, 0, 1, 1, Gosu::Color::YELLOW)
     @font.draw(player_info, 0, 60, 0, 1, 1, Gosu::Color::YELLOW)
-    @font.draw("Facing: #{@tiles_facing.map {|t| t.id}}, #{@tiles_facing.last.to_s}", 0, 80, 0, 1, 1, Gosu::Color::YELLOW)
+    @font.draw("Facing: #{@tiles_facing.map {|t| t.id}}, #{@tile_facing.to_s}", 0, 80, 0, 1, 1, Gosu::Color::YELLOW)
   end
 
   def draw_select_highlight

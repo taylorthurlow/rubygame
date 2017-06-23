@@ -4,7 +4,7 @@ require_relative 'entities/tile'
 Dir[File.dirname(__FILE__) + '/entities/tiles/*.rb'].each {|f| require f}
 
 class WorldMap
-  attr_accessor :data, :tile_sprites
+  attr_accessor :data
 
   def initialize
     @data = parse_map_json('maps/test.json')
@@ -18,72 +18,69 @@ class WorldMap
       width:      data_hash['width'],
       height:     data_hash['height'],
       tile_size:  data_hash['tileheight'],
-      tiles:      {}
+      ground:     [],
+      objects:    []
     }
 
-    # initialize layer hash with names
     data_hash['layers'].each do |layer|
-      data[:tiles][layer['name'].to_sym] = []
-    end
-
-    # iterate layers in map, fill in data to tiles hash
-    data_hash['layers'].each do |layer|
-      tile_id_array = layer['data'].each_slice(data[:width]).map {|t| t}
-
-      tile_array = []
-      tile_id_array.each do |row|
-        tile_array << row.map {|t| Tile.factory(t)}
+      tile_ids = layer['data'].each_slice(data[:width]).map {|t| t}
+      tile_map = []
+      tile_ids.each do |row|
+        tile_map << row.map {|t| Tile.factory(t)}
       end
-
-      data[:tiles][layer['name'].to_sym] = tile_array
+      data[layer['name'].to_sym] = tile_map
     end
 
     return data
   end
 
   def draw(camera)
+    viewport = camera.viewport
 
-    @data[:tiles].each do |layer, data|
-      data.each_with_index do |row, y|
+    viewport.map! {|p| p / data[:tile_size]}
+    x0, x1, y0, y1 = viewport.map(&:to_i)
 
-        row.each_with_index do |tile, x|
-          pos_x = x * @data[:tile_size]
-          pos_y = y * @data[:tile_size]
+    # restrict to prevent re-rendering
+    x0 = 0 if x0 < 0
+    x1 = data[:width] - 1 if x1 >= data[:width]
+    y0 = 0 if y0 < 0
+    y1 = data[:height] - 1 if y1 >= data[:height]
 
-          if tile.id != 0# and camera.can_view?(pos_x, pos_y)
-            tile.draw(pos_x, pos_y)
-          else
-            tile.drawn = false
+    (x0..x1).each do |x|
+      (y0..y1).each do |y|
+        [@data[:ground], @data[:objects]].each do |data|
+          row = data[y]
+          if row
+            tile = data[y][x]
+            if tile.id != 0
+              tile.draw(x * @data[:tile_size], y * @data[:tile_size])
+            else
+              tile.drawn = false
+            end
+
+            tile.pos_x, tile.pos_y = x, y
           end
-
-          tile.pos_x, tile.pos_y = x, y
         end
       end
     end
   end
 
   def can_move_to?(x, y)
-    tnzt = get_top_nonzero_tile(x, y)
-    return tnzt.nil? ? false : tnzt.traversible?
-  end
-
-  def get_top_nonzero_tile(x, y)
-    tnzt = nil
-    tiles_at(x, y).each do |tile|
-      tnzt = tile if tile.id != 0
-    end
-    
-    return tnzt
+    traversible = true
+    tiles_at(x, y).each {|t| traversible = false unless t.traversible?}
+    return traversible
   end
 
   def tile_at(x, y)
-    @data[:tiles].reverse_each do |layer, data|
-      return data[y][x] if data[y][x].id != 0
+    object = data[:objects][y][x]
+    if object.id != 0
+      return object
+    else
+      return data[:ground][y][x]
     end
   end
   
   def tiles_at(x, y)
-    tiles = @data[:tiles].map {|layer, data| data[y][x]}
-    return tiles.reject {|t| t.id == 0}
+    return [data[:ground][y][x], data[:objects][y][x]]
   end
 end

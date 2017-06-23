@@ -20,7 +20,6 @@ class MenuState < GameState
   def update
     continue_text = @play_state ? "c = continue, " : ""
     @info = Gosu::Image.from_text("q = quit, #{continue_text}n = new Game", 30)
-
   end
 
   def button_down(id)

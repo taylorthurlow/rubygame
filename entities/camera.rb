@@ -14,18 +14,12 @@ class Camera
     @pos_y -= @target.speed if @pos_y > @target.pos_y + $window.height / 4
   end
 
-  def can_view?(pos_x, pos_y)
-    x0, x1, y0, y1 = viewport
-    return (x0 - 16..x1).include?(pos_x) && (y0 - 16..y1).include?(pos_y)
-  end
-
-  private
-
   def viewport
     x0 = @pos_x - ($window.width / 2) / @zoom
     x1 = @pos_x + ($window.width / 2) / @zoom
     y0 = @pos_y - ($window.height / 2) / @zoom
     y1 = @pos_y + ($window.height / 2) / @zoom
+
     return [x0, x1, y0, y1]
   end
 end
