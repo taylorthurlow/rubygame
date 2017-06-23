@@ -1,8 +1,3 @@
-require 'gosu'
-require 'json'
-require_relative 'entities/tile'
-Dir[File.dirname(__FILE__) + '/entities/tiles/*.rb'].each {|f| require f}
-
 class WorldMap
   attr_accessor :data
 
@@ -34,9 +29,7 @@ class WorldMap
     return data
   end
 
-  def draw(camera)
-    viewport = camera.viewport
-
+  def draw(viewport)
     viewport.map! {|p| p / data[:tile_size]}
     x0, x1, y0, y1 = viewport.map(&:to_i)
 
@@ -60,7 +53,7 @@ class WorldMap
             tile_ground.drawn = false
           end
 
-          tile_ground.pos_x, tile_ground.pos_y = x, y
+          tile_ground.x, tile_ground.y = x, y
         end
 
         if row_objects
@@ -71,7 +64,7 @@ class WorldMap
             tile_objects.drawn = false
           end
 
-          tile_objects.pos_x, tile_objects.pos_y = x, y
+          tile_objects.x, tile_objects.y = x, y
         end
 
       end

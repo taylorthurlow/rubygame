@@ -1,5 +1,3 @@
-require_relative '../tile'
-
 class TileGrass < Tile
 
   def initialize(id)

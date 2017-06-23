@@ -1,11 +1,3 @@
-# classes
-require_relative 'entities/player'
-require_relative 'world_map'
-
-# libraries
-require 'gosu'
-require 'byebug'
-
 class GameWindow < Gosu::Window
   attr_accessor :state
 
@@ -17,7 +9,7 @@ class GameWindow < Gosu::Window
   end
 
   def update
-    Game.track_update_interval
+    Utils.track_update_interval
     @state.update
     self.caption = 'some stupid ruby game'
   end

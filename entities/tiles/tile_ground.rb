@@ -1,5 +1,3 @@
-require_relative '../tile'
-
 class TileGround < Tile
 
   def initialize(id)

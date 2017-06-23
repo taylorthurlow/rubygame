@@ -1,22 +1,17 @@
-require 'gosu'
-require_relative '../entities/player'
-require_relative '../entities/camera'
-
-require 'ruby-prof'
+require 'ruby-prof' if ENV['ENABLE_PROFILING']
 
 class PlayState < GameState
-  attr_accessor :buttons_down, :x, :y, :map, :camera
+  attr_accessor :update_interval, :debugging
 
   def initialize
-    @x = @y = 0
-    @buttons_down = 1 # start at 1 because the main menu key registers as a button_up but not down
-    @font = Gosu::Font.new($window, Gosu.default_font_name, 20)
-
     @map = WorldMap.new
-    @player = Player.new(self)
-    @camera = Camera.new(@player)
+    @camera = Camera.new
+    @object_pool = ObjectPool.new(@map)
+    @player = Player.new(@object_pool, PlayerInput.new(@camera))
+    @camera.target = @player
 
     @debugging = false
+    @font = Gosu::Font.new($window, Gosu.default_font_name, 20)
   end
 
   def enter
@@ -28,82 +23,64 @@ class PlayState < GameState
   end
 
   def update
-    @player.update(@camera)
+    @object_pool.objects.map(&:update)
+    @object_pool.objects.reject!(&:removable?)
     @camera.update
 
-    # debug stuff
-    @tiles_facing = @player.tiles_facing
-    @tile_facing = @player.tile_facing
-  end
-
-  def button_down(id)
-    case id
-    when Gosu::KbW
-      @player.direction = :up
-    when Gosu::KbA
-      @player.direction = :left
-    when Gosu::KbS
-      @player.direction = :down
-    when Gosu::KbD
-      @player.direction = :right
-    when Gosu::KbQ
-      GameState.switch(MenuState.instance)
-    when Gosu::KbEscape
-      $window.close
-    end
-
-    @buttons_down += 1
-  end
-
-  def button_up(id)
-    @buttons_down -= 1
-
-    # handle multiple buttons
-    if @buttons_down > 0
-      @player.direction = :up    if $window.button_down?(Gosu::KbW)
-      @player.direction = :left  if $window.button_down?(Gosu::KbA)
-      @player.direction = :down  if $window.button_down?(Gosu::KbS)
-      @player.direction = :right if $window.button_down?(Gosu::KbD)
+    if @debugging
+      @tiles_facing = @player.physics.tiles_facing
+      @tile_facing = @player.physics.tile_facing
     end
   end
 
   def draw
     cam_x = @camera.pos_x
     cam_y = @camera.pos_y
-
     off_x = $window.width / 2 - cam_x
     off_y = $window.height / 2 - cam_y
+    viewport = @camera.viewport
 
     $window.translate(off_x, off_y) do
       $window.scale(@camera.zoom, @camera.zoom, cam_x, cam_y) do
-        @map.draw(@camera)
-        @player.draw
-        draw_select_highlight
+        @map.draw(viewport)
+        @object_pool.objects.map {|o| o.draw(viewport)}
+        draw_select_highlight if debugging
       end
     end
 
     if @debugging
-      player_info = "Player: #{@player.x}, #{@player.y} (#{@player.pos_x}, #{@player.pos_y}), Direction: #{@player.direction}"
+      player_info = "Player: #{@player.pos_x / 16}, #{@player.pos_y / 16} (#{@player.pos_x}, #{@player.pos_y}), Direction: #{@player.direction}"
       @font.draw("FPS: #{Gosu.fps}", 0, 0, 0, 1, 1, Gosu::Color::YELLOW)
       @font.draw($window.memory_usage, 0, 20, 0, 1, 1, Gosu::Color::YELLOW)
       @font.draw("Camera: #{@camera.pos_x}, #{@camera.pos_y}", 0, 40, 0, 1, 1, Gosu::Color::YELLOW)
       @font.draw(player_info, 0, 60, 0, 1, 1, Gosu::Color::YELLOW)
       @font.draw("Facing: #{@tiles_facing.map {|t| t.id}}, #{@tile_facing.to_s}", 0, 80, 0, 1, 1, Gosu::Color::YELLOW)
-    else
-      @font.draw("FPS: #{Gosu.fps}", 0, 0, 0, 1, 1, Gosu::Color::YELLOW)
     end
   end
 
+  def button_down(id)
+    case id
+    when Gosu::KbQ
+      leave
+      $window.close
+    when Gosu::KbEscape
+      GameState.switch(MenuState.instance)
+    when Gosu::KbE
+      @debugging = !@debugging
+    end
+
+    @player.input.button_down(id)
+  end
+
+  def button_up(id)
+    @player.input.button_up(id)
+  end
+
+  private
+
   def draw_select_highlight
-    tile = @player.tile_facing
-    tile_x, tile_y = tile.pos_x, tile.pos_y
-    draw_x = tile_x * 16
-    draw_y = tile_y * 16
-
-    Gosu.draw_rect(draw_x, draw_y, 16, 16, Gosu::Color::GREEN, 2)
+    tile = @player.physics.tile_facing
+    Gosu.draw_rect(tile.pos_x, tile.pos_y, 16, 16, Gosu::Color.argb(0x3F_00FF00), 2)
   end
 
-  def needs_redraw?
-    true
-  end
 end

@@ -1,5 +1,4 @@
 require 'singleton'
-require_relative 'game_state'
 
 class MenuState < GameState
   include Singleton

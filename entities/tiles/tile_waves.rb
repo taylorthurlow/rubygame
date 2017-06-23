@@ -1,5 +1,3 @@
-require_relative '../tile'
-
 class TileWaves < Tile
 
   def initialize(id)

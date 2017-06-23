@@ -1,26 +1,32 @@
+#!/usr/bin/env ruby
+
 require 'gosu'
-require_relative 'states/menu_state'
-require_relative 'states/game_state'
-require_relative 'states/play_state'
-require_relative 'game_window'
+require 'byebug'
+require 'json'
 
-module Game
-  def self.media_path(file)
-    File.join(File.dirname(file.dirname(__FILE__)), 'assets', file)
+root_dir = File.dirname(__FILE__)
+require_pattern = File.join(root_dir, '**/*.rb')
+@failed = []
+
+Dir.glob(require_pattern).each do |f|
+  next if f.end_with?('/game.rb')
+  begin
+    require_relative f.gsub("#{root_dir}/", '')
+  rescue
+    # could fail if parent class not required yet
+    @failed << f
   end
+end
 
-  def self.track_update_interval
-    now = Gosu.milliseconds
-    @update_interval = (now - (@last_update ||= 0)).to_f
-    @last_update = now
-  end
-
-  def self.update_interval
-    @update_interval ||= $window.update_interval
-  end
-
-  def self.adjust_speed(speed)
-    speed * update_interval / 33.33
+# retry failed requires
+while @failed.count > 0
+  @failed.each do |f|
+    begin
+      require_relative f.gsub("#{root_dir}/", '')
+      @failed = @failed - [f]
+    rescue
+      # could fail if parent class not required yet
+    end
   end
 end
 

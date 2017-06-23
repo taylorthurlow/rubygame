@@ -1,7 +1,5 @@
-require 'gosu'
-
 class Tile < Gosu::Image
-  attr_accessor :id, :name, :pos_x, :pos_y, :drawn
+  attr_accessor :id, :name, :x, :y, :drawn
 
   def initialize(id)
     @@tile_sprites ||= Tile.get_tile_sprites
@@ -9,10 +7,12 @@ class Tile < Gosu::Image
     @id = id
     @name = "Unnamed"
     @traversible = false
-    @pos_x = nil
-    @pos_y = nil
+    @x = nil
+    @y = nil
   end
 
+  def pos_x; @x * 16 end
+  def pos_y; @y * 16 end
   def traversible?; @traversible end
 
   def draw(draw_x, draw_y)
@@ -20,7 +20,7 @@ class Tile < Gosu::Image
   end
 
   def to_s
-    return "#{name} (#{id}) @ #{pos_x}, #{pos_y} #{traversible? ? 'T' : 'NT'}"
+    return "#{name} (#{id}) @ #{x}, #{y} #{traversible? ? 'T' : 'NT'}"
   end
 
   def self.factory(id)
