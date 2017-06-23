@@ -18,11 +18,11 @@ class PlayState < GameState
   end
 
   def enter
-    RubyProf.start
+    # RubyProf.start
   end
 
   def leave
-    RubyProf::FlatPrinter.new(RubyProf.stop).print(STDOUT)
+    # RubyProf::FlatPrinter.new(RubyProf.stop).print(STDOUT)
   end
 
   def update
