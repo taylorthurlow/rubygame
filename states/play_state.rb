@@ -15,14 +15,16 @@ class PlayState < GameState
     @map = WorldMap.new
     @player = Player.new(self)
     @camera = Camera.new(@player)
+
+    @debugging = false
   end
 
   def enter
-    # RubyProf.start
+    RubyProf.start if ENV['ENABLE_PROFILING']
   end
 
   def leave
-    # RubyProf::FlatPrinter.new(RubyProf.stop).print(STDOUT)
+    RubyProf::FlatPrinter.new(RubyProf.stop).print(STDOUT) if ENV['ENABLE_PROFILING']
   end
 
   def update
@@ -80,13 +82,14 @@ class PlayState < GameState
       end
     end
 
-    player_info = "Player: #{@player.x}, #{@player.y} (#{@player.pos_x}, #{@player.pos_y}), Direction: #{@player.direction}"
-
-    @font.draw("FPS: #{Gosu.fps}", 0, 0, 0, 1, 1, Gosu::Color::YELLOW)
-    @font.draw($window.memory_usage, 0, 20, 0, 1, 1, Gosu::Color::YELLOW)
-    @font.draw("Camera: #{@camera.pos_x}, #{@camera.pos_y}", 0, 40, 0, 1, 1, Gosu::Color::YELLOW)
-    @font.draw(player_info, 0, 60, 0, 1, 1, Gosu::Color::YELLOW)
-    @font.draw("Facing: #{@tiles_facing.map {|t| t.id}}, #{@tile_facing.to_s}", 0, 80, 0, 1, 1, Gosu::Color::YELLOW)
+    if @debugging
+      player_info = "Player: #{@player.x}, #{@player.y} (#{@player.pos_x}, #{@player.pos_y}), Direction: #{@player.direction}"
+      @font.draw("FPS: #{Gosu.fps}", 0, 0, 0, 1, 1, Gosu::Color::YELLOW)
+      @font.draw($window.memory_usage, 0, 20, 0, 1, 1, Gosu::Color::YELLOW)
+      @font.draw("Camera: #{@camera.pos_x}, #{@camera.pos_y}", 0, 40, 0, 1, 1, Gosu::Color::YELLOW)
+      @font.draw(player_info, 0, 60, 0, 1, 1, Gosu::Color::YELLOW)
+      @font.draw("Facing: #{@tiles_facing.map {|t| t.id}}, #{@tile_facing.to_s}", 0, 80, 0, 1, 1, Gosu::Color::YELLOW)
+    end
   end
 
   def draw_select_highlight

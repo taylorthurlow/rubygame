@@ -48,27 +48,39 @@ class WorldMap
 
     (x0..x1).each do |x|
       (y0..y1).each do |y|
-        [@data[:ground], @data[:objects]].each do |data|
-          row = data[y]
-          if row
-            tile = data[y][x]
-            if tile.id != 0
-              tile.draw(x * @data[:tile_size], y * @data[:tile_size])
-            else
-              tile.drawn = false
-            end
 
-            tile.pos_x, tile.pos_y = x, y
+        row_ground = data[:ground][y]
+        row_objects = data[:objects][y]
+
+        if row_ground
+          tile_ground = row_ground[x]
+          if tile_ground.id != 0
+            tile_ground.draw(x * @data[:tile_size], y * @data[:tile_size])
+          else
+            tile_ground.drawn = false
           end
+
+          tile_ground.pos_x, tile_ground.pos_y = x, y
         end
+
+        if row_objects
+          tile_objects = row_objects[x]
+          if tile_objects.id != 0
+            tile_objects.draw(x * @data[:tile_size], y * @data[:tile_size])
+          else
+            tile_objects.drawn = false
+          end
+
+          tile_objects.pos_x, tile_objects.pos_y = x, y
+        end
+
       end
     end
+
   end
 
   def can_move_to?(x, y)
-    traversible = true
-    tiles_at(x, y).each {|t| traversible = false unless t.traversible?}
-    return traversible
+    return (data[:objects][y][x].traversible? and data[:ground][y][x].traversible?)
   end
 
   def tile_at(x, y)
