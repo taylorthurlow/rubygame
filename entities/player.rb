@@ -3,7 +3,7 @@ require 'gosu'
 class Player
   attr_accessor :pos_x, :pos_y, :direction, :speed
 
-  FRAME_DELAY = 50 #milliseconds
+  FRAME_DELAY = 100 #milliseconds
 
   def initialize(play_state)
     @play_state = play_state
@@ -24,13 +24,14 @@ class Player
   ####
 
   def update(camera)
-    @current_frame += 1 if frame_expired?
+    advance_frame
     
+    shift = Game.adjust_speed(@speed)
     new_pos_x, new_pos_y = @pos_x, @pos_y
-    new_pos_y -= @speed if $window.button_down?(Gosu::KbW)
-    new_pos_x -= @speed if $window.button_down?(Gosu::KbA)
-    new_pos_y += @speed if $window.button_down?(Gosu::KbS)
-    new_pos_x += @speed if $window.button_down?(Gosu::KbD)
+    new_pos_y -= shift if $window.button_down?(Gosu::KbW)
+    new_pos_x -= shift if $window.button_down?(Gosu::KbA)
+    new_pos_y += shift if $window.button_down?(Gosu::KbS)
+    new_pos_x += shift if $window.button_down?(Gosu::KbD)
 
     if @map.can_move_to?(new_pos_x / 16, new_pos_y / 16)
       @pos_x, @pos_y = new_pos_x, new_pos_y
@@ -102,6 +103,10 @@ class Player
     end
   end
 
+  def done?
+    @done ||= @current_frame >= 3 # 3 = anim size
+  end
+
   private
 
   def any_button_down?(*buttons)
@@ -112,13 +117,13 @@ class Player
     return false
   end
 
-  def frame_expired?
+  def advance_frame
     now = Gosu.milliseconds
-    @last_frame ||= now
-    if (now - @last_frame) > FRAME_DELAY
+    delta = now - (@last_frame ||= now)
+    if delta > FRAME_DELAY
       @last_frame = now
-      return true
     end
+    @current_frame += (delta / FRAME_DELAY).floor
   end
 
   def load_animation

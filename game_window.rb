@@ -17,6 +17,7 @@ class GameWindow < Gosu::Window
   end
 
   def update
+    Game.track_update_interval
     @state.update
     self.caption = 'some stupid ruby game'
   end

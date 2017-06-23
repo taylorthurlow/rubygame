@@ -8,10 +8,11 @@ class Camera
   end
 
   def update
-    @pos_x += @target.speed if @pos_x < @target.pos_x - $window.width / 4
-    @pos_x -= @target.speed if @pos_x > @target.pos_x + $window.width / 4
-    @pos_y += @target.speed if @pos_y < @target.pos_y - $window.height / 4
-    @pos_y -= @target.speed if @pos_y > @target.pos_y + $window.height / 4
+    shift = Game.adjust_speed(@target.speed)
+    @pos_x += shift if @pos_x < @target.pos_x - $window.width / 4
+    @pos_x -= shift if @pos_x > @target.pos_x + $window.width / 4
+    @pos_y += shift if @pos_y < @target.pos_y - $window.height / 4
+    @pos_y -= shift if @pos_y > @target.pos_y + $window.height / 4
   end
 
   def viewport

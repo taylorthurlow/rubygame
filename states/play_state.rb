@@ -89,6 +89,8 @@ class PlayState < GameState
       @font.draw("Camera: #{@camera.pos_x}, #{@camera.pos_y}", 0, 40, 0, 1, 1, Gosu::Color::YELLOW)
       @font.draw(player_info, 0, 60, 0, 1, 1, Gosu::Color::YELLOW)
       @font.draw("Facing: #{@tiles_facing.map {|t| t.id}}, #{@tile_facing.to_s}", 0, 80, 0, 1, 1, Gosu::Color::YELLOW)
+    else
+      @font.draw("FPS: #{Gosu.fps}", 0, 0, 0, 1, 1, Gosu::Color::YELLOW)
     end
   end
 
