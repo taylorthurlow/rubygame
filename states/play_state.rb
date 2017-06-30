@@ -7,9 +7,17 @@ class PlayState < GameState
     @map = WorldMap.new
     @camera = Camera.new
     @object_pool = ObjectPool.new(@map)
+
+    # player
     @player = Player.new(@object_pool, PlayerInput.new(@camera))
     @camera.target = @player
 
+    # npcs
+    1.times do
+      Human.new(@object_pool, AiInput.new)
+    end
+
+    # debugging
     @debugging = false
     @font = Gosu::Font.new($window, Gosu.default_font_name, 20)
   end
