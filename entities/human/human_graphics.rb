@@ -10,8 +10,7 @@ class HumanGraphics < Component
   end
 
   def update
-    chance = rand(1..100)
-    if chance == 1
+    if rand(1..100) == 1
       object.direction = [:north, :east, :south, :west].sample
     end
 
@@ -24,12 +23,27 @@ class HumanGraphics < Component
       image.draw(pos_x - 8, pos_y - 8, 1)
       object.physics.stopped_moving = false
     end
+
+    # draw_bounding_box
   end
 
   private
 
   def units(path)
     @@units = Gosu::Image.load_tiles($window, path, 16, 16, false)
+  end
+
+  def draw_bounding_box
+    $window.rotate(Utils.direction_angle(object.direction), pos_x, pos_y) do
+      w = @body.first.width
+      h = @body.first.height
+      $window.draw_quad(
+        pos_x - w / 2, pos_y - h / 2, Gosu::Color::FUCHSIA,
+        pos_x + w / 2, pos_y - h / 2, Gosu::Color::FUCHSIA,
+        pos_x + w / 2, pos_y + h / 2, Gosu::Color::FUCHSIA,
+        pos_x - w / 2, pos_y + h / 2, Gosu::Color::FUCHSIA,
+        100)      
+    end
   end
 
   def get_animation

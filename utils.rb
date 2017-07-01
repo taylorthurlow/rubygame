@@ -22,4 +22,17 @@ module Utils
     return $window.button_down?(button)
   end
 
+  def self.direction_angle(direction)
+    case direction
+    when :north
+      return 180
+    when :east
+      return 270
+    when :south
+      return 0
+    when :west
+      return 90
+    end
+  end
+
 end
