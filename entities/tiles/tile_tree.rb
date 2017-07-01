@@ -1,8 +1,8 @@
-class TileWaves < Tile
+class TileTree < Tile
 
   def initialize(id)
     super(id)
-    @name = "Waves"
+    @name = "Tree"
   end
 
 end

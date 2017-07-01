@@ -27,10 +27,10 @@ class Tile < Gosu::Image
   def self.factory(id)
     case id
     when 0; return TileEmpty.new(id)
-    when 12, 13, 65, 66; return TileGrass.new(id)
-    when 9, 10, 11, 17, 18; return TileGround.new(id)
-    when 14; return TileWater.new(id)
-    when 30, 38; return TileWaves.new(id)
+    when (1..4), (214..218), (230..234), (246..248); return TileGrass.new(id)
+    when (219..223), (235..239), (251..253); return TileDirt.new(id)
+    when (209..213), (225..229), (241..243); return TileTree.new(id)
+    when 5, 6; return TileWater.new(id)
     end
 
     return Tile.new(id)
@@ -39,7 +39,6 @@ class Tile < Gosu::Image
   private
   
   def self.get_tile_sprites
-    # Gosu::Image.load_tiles($window, 'assets/basictiles.png', 16, 16, true)
     Gosu::Image.load_tiles('assets/basictiles.png', 16, 16, retro: true)
   end
 

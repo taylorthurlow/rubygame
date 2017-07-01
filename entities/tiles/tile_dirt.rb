@@ -1,8 +1,8 @@
-class TileGround < Tile
+class TileDirt < Tile
 
   def initialize(id)
     super(id)
-    @name = "Ground"
+    @name = "Dirt"
     @traversible = true
   end
 

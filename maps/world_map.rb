@@ -13,17 +13,20 @@ class WorldMap
       width:      data_hash['width'],
       height:     data_hash['height'],
       tile_size:  data_hash['tileheight'],
-      ground:     [],
-      objects:    []
+      layers:     []
     }
 
     data_hash['layers'].each do |layer|
+      tile_layer = TileLayer.new(layer['name'], data[:width], data[:height])
       tile_ids = layer['data'].each_slice(data[:width]).map {|t| t}
-      tile_map = []
-      tile_ids.each do |row|
-        tile_map << row.map {|t| Tile.factory(t)}
+
+      tile_ids.each do |y|
+        y.each do |x|
+          tile_layer.add_tile(x)
+        end
       end
-      data[layer['name'].to_sym] = tile_map
+
+      data[:layers] << tile_layer
     end
 
     return data
@@ -42,29 +45,16 @@ class WorldMap
     (x0..x1).each do |x|
       (y0..y1).each do |y|
 
-        row_ground = data[:ground][y]
-        row_objects = data[:objects][y]
-
-        if row_ground
-          tile_ground = row_ground[x]
-          if tile_ground.id != 0
-            tile_ground.draw(x * @data[:tile_size], y * @data[:tile_size])
+        data[:layers].each do |tl|
+          tile = tl.tile(x, y)
+          if tile.id != 0
+            tile.draw(x * @data[:tile_size], y * @data[:tile_size])
           else
-            tile_ground.drawn = false
+            tile.drawn = false
           end
 
-          tile_ground.x, tile_ground.y = x, y
-        end
-
-        if row_objects
-          tile_objects = row_objects[x]
-          if tile_objects.id != 0
-            tile_objects.draw(x * @data[:tile_size], y * @data[:tile_size])
-          else
-            tile_objects.drawn = false
-          end
-
-          tile_objects.x, tile_objects.y = x, y
+          tile.x = x
+          tile.y = y
         end
 
       end
@@ -73,19 +63,22 @@ class WorldMap
   end
 
   def can_move_to?(x, y)
-    return (data[:objects][y][x].traversible? and data[:ground][y][x].traversible?)
+    traversible = true
+    data[:layers].each do |layer|
+      if !layer.tile(x, y).traversible?
+        traversible = false
+        return false
+      end
+    end
+
+    return true
   end
 
   def tile_at(x, y)
-    object = data[:objects][y][x]
-    if object.id != 0
-      return object
-    else
-      return data[:ground][y][x]
-    end
+    return (tiles_at(x, y).delete_if {|t| t.is_a? TileEmpty}).last
   end
   
   def tiles_at(x, y)
-    return [data[:ground][y][x], data[:objects][y][x]]
+    return data[:layers].map {|layer| layer.tile(x, y)}
   end
 end
