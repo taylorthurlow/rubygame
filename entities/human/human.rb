@@ -2,7 +2,7 @@ class Human < Entity
   attr_accessor :pos_x, :pos_y, :direction, :physics, :sounds, :input
 
   def initialize(object_pool, input)
-    super(object_pool)
+    GameObject.instance_method(:initialize).bind(self).call(object_pool)
     
     @input = input
     @input.control(self)

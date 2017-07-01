@@ -4,6 +4,19 @@ module Utils
     File.join(File.dirname(file.dirname(__FILE__)), 'assets', file)
   end
 
+  def self.frame_delay
+    return 100 # milliseconds
+  end
+
+  def self.debug_colors
+    return [
+      Gosu::Color::RED,
+      Gosu::Color::BLUE,
+      Gosu::Color::YELLOW,
+      Gosu::Color::WHITE
+    ]
+  end
+
   def self.track_update_interval
     now = Gosu.milliseconds
     @update_interval = (now - (@last_update ||= 0)).to_f
