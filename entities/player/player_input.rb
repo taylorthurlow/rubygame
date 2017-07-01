@@ -35,6 +35,8 @@ class PlayerInput < Component
       object.direction = :south
     when Gosu::KbD
       object.direction = :east
+    when Gosu::KbSpace
+      object.physics.tile_facing.interact
     end
   end
 

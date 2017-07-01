@@ -20,6 +20,11 @@ class Tile < Gosu::Image
     @@tile_sprites[id - 1].draw(draw_x, draw_y, z_index)
   end
 
+  def interact
+    # override
+    puts "Player interacted with #{@name} tile @ #{@x}, #{@y}."
+  end
+
   def to_s
     return "#{name} (#{id}) @ #{x}, #{y} #{traversible? ? 'T' : 'NT'}"
   end
@@ -31,6 +36,7 @@ class Tile < Gosu::Image
     when (219..223), (235..239), (251..253); return TileDirt.new(id)
     when (209..213), (225..229), (241..243); return TileTree.new(id)
     when 5, 6; return TileWater.new(id)
+    when 10;s return TileDoor.new(id)
     end
 
     return Tile.new(id)
@@ -39,7 +45,7 @@ class Tile < Gosu::Image
   private
   
   def self.get_tile_sprites
-    Gosu::Image.load_tiles('assets/basictiles.png', 16, 16, retro: true)
+    return Gosu::Image.load_tiles('assets/basictiles.png', 16, 16, retro: true)
   end
 
 end
