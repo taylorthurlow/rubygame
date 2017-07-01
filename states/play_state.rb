@@ -7,10 +7,18 @@ class PlayState < GameState
     @map = WorldMap.new
     @camera = Camera.new
     @object_pool = ObjectPool.new(@map)
+
+    # player
     @player = Player.new(@object_pool, PlayerInput.new(@camera))
     @camera.target = @player
 
-    @debugging = false
+    # npcs
+    1.times do
+      Human.new(@object_pool, AiInput.new)
+    end
+
+    # debugging
+    $debugging = false
     @font = Gosu::Font.new($window, Gosu.default_font_name, 20)
   end
 
@@ -27,7 +35,7 @@ class PlayState < GameState
     @object_pool.objects.reject!(&:removable?)
     @camera.update
 
-    if @debugging
+    if $debugging
       @tiles_facing = @player.physics.tiles_facing
       @tile_facing = @player.physics.tile_facing
     end
@@ -44,17 +52,17 @@ class PlayState < GameState
       $window.scale(@camera.zoom, @camera.zoom, cam_x, cam_y) do
         @map.draw(viewport)
         @object_pool.objects.map {|o| o.draw(viewport)}
-        draw_select_highlight if debugging
+        draw_select_highlight if $debugging
       end
     end
 
-    if @debugging
+    if $debugging
       player_info = "Player: #{@player.pos_x / 16}, #{@player.pos_y / 16} (#{@player.pos_x}, #{@player.pos_y}), Direction: #{@player.direction}"
-      @font.draw("FPS: #{Gosu.fps}", 0, 0, 0, 1, 1, Gosu::Color::YELLOW)
-      @font.draw($window.memory_usage, 0, 20, 0, 1, 1, Gosu::Color::YELLOW)
-      @font.draw("Camera: #{@camera.pos_x}, #{@camera.pos_y}", 0, 40, 0, 1, 1, Gosu::Color::YELLOW)
-      @font.draw(player_info, 0, 60, 0, 1, 1, Gosu::Color::YELLOW)
-      @font.draw("Facing: #{@tiles_facing.map {|t| t.id}}, #{@tile_facing.to_s}", 0, 80, 0, 1, 1, Gosu::Color::YELLOW)
+      @font.draw("FPS: #{Gosu.fps}", 0, 0, 9999, 1, 1, Gosu::Color::YELLOW)
+      @font.draw($window.memory_usage, 0, 20, 9999, 1, 1, Gosu::Color::YELLOW)
+      @font.draw("Camera: #{@camera.pos_x}, #{@camera.pos_y}", 0, 40, 9999, 1, 1, Gosu::Color::YELLOW)
+      @font.draw(player_info, 0, 60, 9999, 1, 1, Gosu::Color::YELLOW)
+      @font.draw("Facing: #{@tiles_facing.map {|t| t.id}}, #{@tile_facing.to_s}", 0, 80, 9999, 1, 1, Gosu::Color::YELLOW)
     end
   end
 
@@ -66,7 +74,7 @@ class PlayState < GameState
     when Gosu::KbEscape
       GameState.switch(MenuState.instance)
     when Gosu::KbE
-      @debugging = !@debugging
+      $debugging = !$debugging
     end
 
     @player.input.button_down(id)
@@ -80,7 +88,7 @@ class PlayState < GameState
 
   def draw_select_highlight
     tile = @player.physics.tile_facing
-    Gosu.draw_rect(tile.pos_x, tile.pos_y, 16, 16, Gosu::Color.argb(0x3F_00FF00), 2)
+    Gosu.draw_rect(tile.pos_x, tile.pos_y, 16, 16, Gosu::Color.argb(0x3F_00FF00), 9999)
   end
 
 end

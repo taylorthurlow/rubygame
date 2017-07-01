@@ -16,7 +16,8 @@ class Tile < Gosu::Image
   def traversible?; @traversible end
 
   def draw(draw_x, draw_y)
-    @@tile_sprites[id - 1].draw(draw_x, draw_y, 0)
+    z_index = traversible? ? 0 : draw_y
+    @@tile_sprites[id - 1].draw(draw_x, draw_y, z_index)
   end
 
   def to_s

@@ -1,4 +1,4 @@
-class Player < Human
+class Human < Entity
   attr_accessor :pos_x, :pos_y, :direction, :physics, :sounds, :input
 
   def initialize(object_pool, input)
@@ -7,9 +7,11 @@ class Player < Human
     @input = input
     @input.control(self)
     @physics = HumanPhysics.new(self, object_pool)
-    @graphics = PlayerGraphics.new(self)
+    @graphics = HumanGraphics.new(self)
     @sounds = EntitySounds.new(self)
     @direction = :south
+
+    @pos_x, @pos_y = [32 * 16, 32 * 16]
   end
- 
+  
 end
