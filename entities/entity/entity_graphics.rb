@@ -24,7 +24,7 @@ class EntityGraphics < Component
   private
 
   def units(path)
-    @units = Gosu::Image.load_tiles($window, path, 16, 16, false)
+    @units = Gosu::Image.load_tiles(path, 16, 16, retro: true)
   end
 
   def draw_bounding_box

@@ -39,7 +39,8 @@ class Tile < Gosu::Image
   private
   
   def self.get_tile_sprites
-    Gosu::Image.load_tiles($window, 'assets/basictiles.png', 16, 16, true)
+    # Gosu::Image.load_tiles($window, 'assets/basictiles.png', 16, 16, true)
+    Gosu::Image.load_tiles('assets/basictiles.png', 16, 16, retro: true)
   end
 
 end
