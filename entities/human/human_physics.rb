@@ -1,4 +1,4 @@
-class EntityPhysics < Component
+class HumanPhysics < Component
   attr_accessor :speed, :stopped_moving, :attempting_to_move
 
   def initialize(game_object, object_pool)
@@ -27,7 +27,7 @@ class EntityPhysics < Component
       new_pos_y += shift if object.input.moving_down
       new_pos_x += shift if object.input.moving_right
 
-      if can_move_to?(new_pos_x.round / 16, new_pos_y.round / 16)
+      if can_move_to?(new_pos_x.round, new_pos_y.round)
         object.pos_x, object.pos_y = new_pos_x, new_pos_y
       else
         # make a sound possibly
@@ -37,8 +37,44 @@ class EntityPhysics < Component
     end
   end
 
+  def box
+    # standard human textures are 16x16, but the actual sprite is
+    # only 10 pixels wide (3px blank, 10px content, 3px blank)
+    # 
+    # additionally, top half of sprite is not collidable to prevent
+    # head from colliding with objects
+  
+    w = 8 / 2
+    h = 16 / 2
+    
+    return [
+      pos_x - w,     pos_y    ,     # top left
+      pos_x + w,     pos_y    ,     # top right
+      pos_x + w,     pos_y + h,     # bottom right
+      pos_x - w,     pos_y + h,     # bottom left
+    ]
+  end
+
   def can_move_to?(pos_x, pos_y)
-    return @map.can_move_to?(pos_x, pos_y)
+    old_pos_x, old_pos_y = object.pos_x, object.pos_y
+    object.pos_x = pos_x
+    object.pos_y = pos_y
+
+    return false unless @map.can_move_to?(pos_x / 16, pos_y / 16)
+
+    @object_pool.nearby(object, 100).each do |obj|
+      if collides_with_poly?(obj.physics.box)
+        # helps get unstuck
+        old_distance = Utils.distance_between(obj.pos_x, obj.pos_y, old_pos_x, old_pos_y)
+        new_distance = Utils.distance_between(obj.pos_x, obj.pos_y, pos_x, pos_y)
+        return false if new_distance < old_distance
+      end
+    end
+
+    return true
+  ensure
+    object.pos_x = old_pos_x
+    object.pos_y = old_pos_y
   end
 
   def moving?
@@ -84,6 +120,19 @@ class EntityPhysics < Component
   def tile_right; [x + 1, y] end
 
   private
+
+  def collides_with_poly?(poly)
+    if poly
+      poly.each_slice(2) do |x, y|
+        return true if Utils.point_in_poly(x, y, *box)
+      end
+      box.each_slice(2) do |x, y|
+        return true if Utils.point_in_poly(x, y, *poly)
+      end
+
+      return false
+    end
+  end
 
   def accelerate
     @speed += 1 if @speed < 2

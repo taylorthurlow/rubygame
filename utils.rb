@@ -22,16 +22,54 @@ module Utils
     return $window.button_down?(button)
   end
 
+  def self.rotate(angle, around_x, around_y, *points)
+    result = []
+    points.each_slice(2) do |x, y|
+      r_x = Math.cos(angle) * (x - around_x) - Math.sin(angle) * (y - around_y) + around_x
+      r_y = Math.sin(angle) * (x - around_x) - Math.cos(angle) * (y - around_y) + around_y
+      result << r_x
+      result << r_y
+    end
+    return result
+  end
+
+  def self.distance_between(x1, y1, x2, y2)
+    dx = x1 - x2
+    dy = y1 - y2
+    return Math.sqrt(dx * dx + dy * dy)
+  end
+
+  def self.point_in_poly(testx, testy, *poly)
+    nvert = poly.size / 2 # Number of vertices in poly
+    vertx = []
+    verty = []
+    poly.each_slice(2) do |x, y|
+      vertx << x
+      verty << y
+    end
+    inside = false
+    j = nvert - 1
+    (0..nvert - 1).each do |i|
+      if (((verty[i] > testy) != (verty[j] > testy)) &&
+        (testx < (vertx[j] - vertx[i]) * (testy - verty[i]) /
+        (verty[j] - verty[i]) + vertx[i]))
+        inside = !inside
+      end
+      j = i
+    end
+    return inside
+  end
+
   def self.direction_angle(direction)
     case direction
     when :north
       return 180
     when :east
-      return 270
+      return 90
     when :south
       return 0
     when :west
-      return 90
+      return 270
     end
   end
 

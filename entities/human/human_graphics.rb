@@ -1,6 +1,12 @@
 class HumanGraphics < Component
   
   FRAME_DELAY = 100 #milliseconds
+  DEBUG_COLORS = [
+    Gosu::Color::RED,
+    Gosu::Color::BLUE,
+    Gosu::Color::YELLOW,
+    Gosu::Color::WHITE
+  ]
 
   def initialize(game_object)
     super(game_object)
@@ -24,7 +30,7 @@ class HumanGraphics < Component
       object.physics.stopped_moving = false
     end
 
-    # draw_bounding_box
+    draw_bounding_box if $debugging
   end
 
   private
@@ -34,15 +40,15 @@ class HumanGraphics < Component
   end
 
   def draw_bounding_box
-    $window.rotate(Utils.direction_angle(object.direction), pos_x, pos_y) do
-      w = @body.first.width
-      h = @body.first.height
-      $window.draw_quad(
-        pos_x - w / 2, pos_y - h / 2, Gosu::Color::FUCHSIA,
-        pos_x + w / 2, pos_y - h / 2, Gosu::Color::FUCHSIA,
-        pos_x + w / 2, pos_y + h / 2, Gosu::Color::FUCHSIA,
-        pos_x - w / 2, pos_y + h / 2, Gosu::Color::FUCHSIA,
-        100)      
+    i = 0
+    object.physics.box.each_slice(2) do |x, y|
+      color = DEBUG_COLORS[i]
+      $window.draw_triangle(
+        x - 3, y - 3, color,
+        x,     y,     color,
+        x + 3, y - 3, color,
+        9999)
+      i = (i + 1) % 4
     end
   end
 

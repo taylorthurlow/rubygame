@@ -6,12 +6,12 @@ class Human < Entity
     
     @input = input
     @input.control(self)
-    @physics = EntityPhysics.new(self, object_pool)
+    @physics = HumanPhysics.new(self, object_pool)
     @graphics = HumanGraphics.new(self)
     @sounds = EntitySounds.new(self)
     @direction = :south
 
     @pos_x, @pos_y = [32 * 16, 32 * 16]
   end
- 
+  
 end
