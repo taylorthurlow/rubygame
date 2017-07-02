@@ -10,4 +10,7 @@ class Entity < GameObject
     @direction = :south
   end
 
+  def x; @pos_x / 16 end
+  def y; @pos_y / 16 end
+
 end

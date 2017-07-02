@@ -52,8 +52,8 @@ class EntityPhysics < Component
     old_pos_x, old_pos_y = object.pos_x, object.pos_y
     object.pos_x = pos_x
     object.pos_y = pos_y
-
-    return false unless @map.can_move_to?(pos_x / 16, pos_y / 16)
+    
+    # return false unless @map.can_move_to?(pos_x / 16, pos_y / 16)
 
     @object_pool.nearby(object, 100).each do |obj|
       if collides_with_poly?(obj.physics.box)
@@ -61,6 +61,22 @@ class EntityPhysics < Component
         old_distance = Utils.distance_between(obj.pos_x, obj.pos_y, old_pos_x, old_pos_y)
         new_distance = Utils.distance_between(obj.pos_x, obj.pos_y, pos_x, pos_y)
         return false if new_distance < old_distance
+      end
+    end
+
+    @map.nearby(object).each do |tiles|
+      tiles.each do |tile|
+        debugger if tile.nil?
+        tile.colliders.each do |collider|
+          adjusted_collider = []
+          
+          collider.each do |x, y|
+            adjusted_collider << [x += tile.pos_x, y += tile.pos_y]
+          end
+
+          return false if collides_with_poly?(adjusted_collider)
+        end
+
       end
     end
 
@@ -89,10 +105,10 @@ class EntityPhysics < Component
 
   def collides_with_poly?(poly)
     if poly
-      poly.each_slice(2) do |x, y|
+      poly.each do |x, y|
         return true if Utils.point_in_poly(x, y, *box)
       end
-      box.each_slice(2) do |x, y|
+      box.each do |x, y|
         return true if Utils.point_in_poly(x, y, *poly)
       end
 

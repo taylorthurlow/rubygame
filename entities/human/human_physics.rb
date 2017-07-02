@@ -22,10 +22,10 @@ class HumanPhysics < EntityPhysics
     h = 16 / 2
     
     return [
-      pos_x - w,     pos_y    ,     # top left
-      pos_x + w,     pos_y    ,     # top right
-      pos_x + w,     pos_y + h,     # bottom right
-      pos_x - w,     pos_y + h,     # bottom left
+      [pos_x - w, pos_y    ],     # top left
+      [pos_x + w, pos_y    ],     # top right
+      [pos_x + w, pos_y + h],     # bottom right
+      [pos_x - w, pos_y + h]      # bottom left
     ]
   end
 

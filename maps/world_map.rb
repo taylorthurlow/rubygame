@@ -62,6 +62,16 @@ class WorldMap
 
   end
 
+  def nearby(object)
+    near = []
+    (object.x - 1..object.x + 1).each do |x|
+      (object.y - 1..object.y + 1).each do |y|
+        near << tiles_at(x, y)
+      end
+    end
+    return near
+  end
+
   def can_move_to?(x, y)
     traversible = true
     data[:layers].each do |layer|
@@ -75,10 +85,10 @@ class WorldMap
   end
 
   def tile_at(x, y)
-    return (tiles_at(x, y).delete_if {|t| t.is_a? TileEmpty}).last
+    return tiles_at(x, y).last
   end
   
   def tiles_at(x, y)
-    return data[:layers].map {|layer| layer.tile(x, y)}
+    return data[:layers].map {|layer| layer.tile(x, y)}.delete_if {|t| t.is_a? TileEmpty}
   end
 end
