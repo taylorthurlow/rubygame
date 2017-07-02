@@ -41,10 +41,10 @@ class EntityPhysics < Component
     # this is a generic 16x16 collision box, it should be overridden
     
     return [
-      pos_x - 8,     pos_y - 8,     # top left
-      pos_x + 8,     pos_y - 8,     # top right
-      pos_x + 8,     pos_y + 8,     # bottom right
-      pos_x - 8,     pos_y + 8,     # bottom left
+      [pos_x - 8 + 0,  pos_y - 8 + 0 ],
+      [pos_x - 8 + 16, pos_y - 8 + 0 ],
+      [pos_x - 8 + 16, pos_y - 8 + 16],
+      [pos_x - 8 + 0,  pos_y - 8 + 16]
     ]
   end
 

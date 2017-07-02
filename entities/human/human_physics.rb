@@ -12,20 +12,13 @@ class HumanPhysics < EntityPhysics
   end
 
   def box
-    # standard human textures are 16x16, but the actual sprite is
-    # only 10 pixels wide (3px blank, 10px content, 3px blank)
-    # 
-    # additionally, top half of sprite is not collidable to prevent
-    # head from colliding with objects
-  
-    w = 8 / 2
-    h = 16 / 2
+    # this is a generic 16x16 collision box, it should be overridden
     
     return [
-      [pos_x - w, pos_y    ],     # top left
-      [pos_x + w, pos_y    ],     # top right
-      [pos_x + w, pos_y + h],     # bottom right
-      [pos_x - w, pos_y + h]      # bottom left
+      [pos_x - 8 + 0,  pos_y - 8 + 8 ],
+      [pos_x - 8 + 16, pos_y - 8 + 8 ],
+      [pos_x - 8 + 16, pos_y - 8 + 16],
+      [pos_x - 8 + 0,  pos_y - 8 + 16]
     ]
   end
 
