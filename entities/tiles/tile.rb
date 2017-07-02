@@ -36,7 +36,7 @@ class Tile < Gosu::Image
     when (219..223), (235..239), (251..253); return TileDirt.new(id)
     when (209..213), (225..229), (241..243); return TileTree.new(id)
     when 5, 6; return TileWater.new(id)
-    when 10;s return TileDoor.new(id)
+    when 10; return TileDoor.new(id)
     end
 
     return Tile.new(id)
