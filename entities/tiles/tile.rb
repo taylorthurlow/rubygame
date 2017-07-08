@@ -2,34 +2,26 @@ class Tile < Gosu::Image
   attr_accessor :id, :name, :x, :y, :drawn, :colliders
 
   def initialize(id)
-    @@tile_sprites ||= Tile.get_tile_sprites
+    @@tile_sprites ||= Gosu::Image.load_tiles('assets/basictiles.png', 16, 16, retro: true)
+    @@tile_data ||= JSON.parse(File.read('maps/basictiles.json'))
 
     @id = id
     @name = "Unnamed"
-    @traversible = false
     @x = nil
     @y = nil
     
     @colliders = []
-    @@tile_data ||= JSON.parse(File.read('maps/basictiles.json'))
-
     get_json_data unless id == 0
   end
 
   def pos_x; @x * 16 end
   def pos_y; @y * 16 end
 
-  def traversible?; @traversible end
-
   def draw(draw_x, draw_y)
     z_index = @colliders.empty? ? 0 : draw_y
     @@tile_sprites[id - 1].draw(draw_x, draw_y, z_index)
 
-    if $debugging
-      draw_bounding_box
-      font = Gosu::Font.new($window, Gosu.default_font_name, 6)
-      #font.draw(z_index.to_s, draw_x, draw_y, 9999) if z_index != 0
-    end
+    draw_bounding_box if $debugging
   end
 
   def interact
@@ -38,7 +30,7 @@ class Tile < Gosu::Image
   end
 
   def to_s
-    return "#{name} (#{id}) @ #{x}, #{y} #{traversible? ? 'T' : 'NT'}"
+    return "#{@name} (#{@id}) @ #{@x}, #{@y} - Colliders: #{@colliders.count}"
   end
 
   def self.factory(id)
@@ -75,10 +67,6 @@ class Tile < Gosu::Image
         end
       end
     end
-  end
-
-  def self.get_tile_sprites
-    return Gosu::Image.load_tiles('assets/basictiles.png', 16, 16, retro: true)
   end
 
   def get_json_data

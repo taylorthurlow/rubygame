@@ -4,7 +4,7 @@ class Camera
   def target=(target)
     @target = target
     @pos_x, @pos_y = target.pos_x, target.pos_y
-    @zoom = 2
+    @zoom = 4
   end
 
   def update

@@ -12,13 +12,11 @@ class HumanPhysics < EntityPhysics
   end
 
   def box
-    # this is a generic 16x16 collision box, it should be overridden
-    
     return [
-      [pos_x - 8 + 0,  pos_y - 8 + 8 ],
-      [pos_x - 8 + 16, pos_y - 8 + 8 ],
-      [pos_x - 8 + 16, pos_y - 8 + 16],
-      [pos_x - 8 + 0,  pos_y - 8 + 16]
+      [pos_x - 8 + 4,  pos_y - 8 + 8 ],
+      [pos_x - 8 + 12, pos_y - 8 + 8 ],
+      [pos_x - 8 + 12, pos_y - 8 + 16],
+      [pos_x - 8 + 4,  pos_y - 8 + 16]
     ]
   end
 

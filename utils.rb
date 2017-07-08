@@ -35,43 +35,10 @@ module Utils
     return $window.button_down?(button)
   end
 
-  def self.rotate(angle, around_x, around_y, *points)
-    result = []
-    points.each_slice(2) do |x, y|
-      r_x = Math.cos(angle) * (x - around_x) - Math.sin(angle) * (y - around_y) + around_x
-      r_y = Math.sin(angle) * (x - around_x) - Math.cos(angle) * (y - around_y) + around_y
-      result << r_x
-      result << r_y
-    end
-    return result
-  end
-
   def self.distance_between(x1, y1, x2, y2)
     dx = x1 - x2
     dy = y1 - y2
     return Math.sqrt(dx * dx + dy * dy)
-  end
-
-  def self.point_in_poly(testx, testy, *poly)
-    nvert = poly.size # Number of vertices in poly
-    vertx = []
-    verty = []
-    poly.each do |x, y|
-      vertx << x
-      verty << y
-    end
-    inside = false
-    j = nvert - 1
-    (0..nvert - 1).each do |i|
-      # debugger if verty[i].nil? or verty[j].nil? or testy.nil?
-      if (((verty[i] > testy) != (verty[j] > testy)) &&
-        (testx < (vertx[j] - vertx[i]) * (testy - verty[i]) /
-        (verty[j] - verty[i]) + vertx[i]))
-        inside = !inside
-      end
-      j = i
-    end
-    return inside
   end
 
   def self.direction_angle(direction)
@@ -85,6 +52,51 @@ module Utils
     when :west
       return 270
     end
+  end
+
+  ## POINT IN POLY
+
+  def self.point_in_poly(testx, testy, *poly)
+    return false if outside_bounding_box?(testx, testy, *poly)
+
+    point_in_poly = false
+    i = -1
+    j = poly.count - 1
+    while (i += 1) < poly.count
+      a_point_on_polygon = poly[i]
+      trailing_point_on_polygon = poly[j]
+      if point_is_between_the_ys_of_the_line_segment?([testx, testy], a_point_on_polygon, trailing_point_on_polygon)
+        if ray_crosses_through_line_segment?([testx, testy], a_point_on_polygon, trailing_point_on_polygon)
+          point_in_poly = !point_in_poly
+        end
+      end
+      j = i
+    end
+    return point_in_poly
+  end
+
+  private
+
+  def self.point_is_between_the_ys_of_the_line_segment?(point, a_point_on_polygon, trailing_point_on_polygon)
+    (a_point_on_polygon[1] <= point[1] && point[1] < trailing_point_on_polygon[1]) || 
+    (trailing_point_on_polygon[1] <= point[1] && point[1] < a_point_on_polygon[1])
+  end
+
+  def self.ray_crosses_through_line_segment?(point, a_point_on_polygon, trailing_point_on_polygon)
+    (point[0] < (trailing_point_on_polygon[0] - a_point_on_polygon[0]) * (point[1] - a_point_on_polygon[1]) / (trailing_point_on_polygon[1] - a_point_on_polygon[1]) + a_point_on_polygon[0])
+  end
+
+  def self.outside_bounding_box?(x, y, *poly)
+    max_x, max_y, min_x, min_y = nil
+    x_coords = poly.map {|p| p[0]}
+    y_coords = poly.map {|p| p[1]}
+
+    max_x = x_coords.max
+    max_y = y_coords.max
+    min_x = x_coords.min
+    min_y = y_coords.min
+    
+    return x < min_x || x > max_x || y < min_y || y > max_y
   end
 
 end

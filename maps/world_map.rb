@@ -72,18 +72,6 @@ class WorldMap
     return near
   end
 
-  def can_move_to?(x, y)
-    traversible = true
-    data[:layers].each do |layer|
-      if !layer.tile(x, y).traversible?
-        traversible = false
-        return false
-      end
-    end
-
-    return true
-  end
-
   def tile_at(x, y)
     return tiles_at(x, y).last
   end

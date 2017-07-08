@@ -5,13 +5,12 @@ class TileDoor < Tile
     
     @tile_sprites = get_sprites
     @name = "Door"
-    @traversible = false
 
     @state = :closed
   end
 
   def draw(draw_x, draw_y)
-    z_index = traversible? ? 0 : draw_y
+    z_index = @colliders.empty? ? 0 : draw_y
 
     case @state
     when :closed
@@ -20,7 +19,6 @@ class TileDoor < Tile
       @current_frame += 1
       if @current_frame == 2
         @state = :open
-        @traversible = true
       end
     when :open
       @current_frame = 3
@@ -28,7 +26,6 @@ class TileDoor < Tile
       @current_frame -= 1
       if @current_frame == 1
         @state = :closed
-        @traversible = false
       end
     end
 
