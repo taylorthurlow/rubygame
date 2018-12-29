@@ -1,9 +1,7 @@
 class TileGrass < Tile
-
   def initialize(id)
     super(id)
-    @name = "Grass"
+    @name = 'Grass'
     @traversible = true
   end
-
 end

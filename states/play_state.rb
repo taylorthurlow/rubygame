@@ -1,4 +1,5 @@
 require 'ruby-prof' if ENV['ENABLE_PROFILING']
+require 'memory_profiler' if ENV['PROFILE_MEMORY']
 
 class PlayState < GameState
   attr_accessor :update_interval, :debugging
@@ -24,10 +25,12 @@ class PlayState < GameState
 
   def enter
     RubyProf.start if ENV['ENABLE_PROFILING']
+    MemoryProfiler.start if ENV['PROFILE_MEMORY']
   end
 
   def leave
     RubyProf::FlatPrinter.new(RubyProf.stop).print(STDOUT) if ENV['ENABLE_PROFILING']
+    MemoryProfiler.stop.pretty_print(color_output: true, scale_bytes: true) if ENV['PROFILE_MEMORY']
   end
 
   def update
@@ -51,18 +54,18 @@ class PlayState < GameState
     $window.translate(off_x, off_y) do
       $window.scale(@camera.zoom, @camera.zoom, cam_x, cam_y) do
         @map.draw(viewport)
-        @object_pool.objects.map {|o| o.draw(viewport)}
+        @object_pool.objects.map { |o| o.draw(viewport) }
         draw_select_highlight if $debugging
       end
     end
 
+    @font.draw_text("FPS: #{Gosu.fps}", 0, 0, 9999, 1, 1, Gosu::Color::YELLOW)
     if $debugging
       player_info = "Player: #{@player.pos_x / 16}, #{@player.pos_y / 16} (#{@player.pos_x}, #{@player.pos_y}), Direction: #{@player.direction}"
-      @font.draw("FPS: #{Gosu.fps}", 0, 0, 9999, 1, 1, Gosu::Color::YELLOW)
-      @font.draw($window.memory_usage, 0, 20, 9999, 1, 1, Gosu::Color::YELLOW)
-      @font.draw("Camera: #{@camera.pos_x}, #{@camera.pos_y}", 0, 40, 9999, 1, 1, Gosu::Color::YELLOW)
-      @font.draw(player_info, 0, 60, 9999, 1, 1, Gosu::Color::YELLOW)
-      @font.draw("Facing: #{@tiles_facing.map {|t| t.id}}, #{@tile_facing.to_s}", 0, 80, 9999, 1, 1, Gosu::Color::YELLOW)
+      @font.draw_text($window.memory_usage, 0, 20, 9999, 1, 1, Gosu::Color::YELLOW)
+      @font.draw_text("Camera: #{@camera.pos_x}, #{@camera.pos_y}", 0, 40, 9999, 1, 1, Gosu::Color::YELLOW)
+      @font.draw_text(player_info, 0, 60, 9999, 1, 1, Gosu::Color::YELLOW)
+      @font.draw_text("Facing: #{@tiles_facing.map(&:id)}, #{@tile_facing}", 0, 80, 9999, 1, 1, Gosu::Color::YELLOW)
     end
   end
 
@@ -90,5 +93,4 @@ class PlayState < GameState
     tile = @player.physics.tile_facing
     Gosu.draw_rect(tile.pos_x, tile.pos_y, 16, 16, Gosu::Color.argb(0x3F_00FF00), 9999)
   end
-
 end

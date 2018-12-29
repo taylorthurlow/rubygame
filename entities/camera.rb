@@ -3,13 +3,13 @@ class Camera
 
   def target=(target)
     @target = target
-    @pos_x, @pos_y = target.pos_x, target.pos_y
+    @pos_x = target.pos_x
+    @pos_y = target.pos_y
     @zoom = 1
   end
 
   def update
-    shift = Utils.adjust_speed(@target.physics.speed)
-    shift = shift.round
+    shift = Utils.adjust_speed(@target.physics.speed).round
     @pos_x += shift if @pos_x < @target.pos_x - $window.width / 4
     @pos_x -= shift if @pos_x > @target.pos_x + $window.width / 4
     @pos_y += shift if @pos_y < @target.pos_y - $window.height / 4

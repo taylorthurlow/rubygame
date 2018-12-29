@@ -56,5 +56,4 @@ class PlayerInput < Component
 
     return false
   end
-
 end

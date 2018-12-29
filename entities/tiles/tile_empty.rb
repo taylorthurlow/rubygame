@@ -1,9 +1,7 @@
 class TileEmpty < Tile
-
   def initialize(id)
     super(id)
-    @name = "Empty"
+    @name = 'Empty'
     @traversible = true
   end
-
 end

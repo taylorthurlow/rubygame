@@ -1,8 +1,6 @@
 class TileWaves < Tile
-
   def initialize(id)
     super(id)
-    @name = "Waves"
+    @name = 'Waves'
   end
-
 end

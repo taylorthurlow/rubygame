@@ -1,9 +1,11 @@
 source 'https://rubygems.org'
 
-gem 'ruby-prof'
+ruby '2.6.0'
+
+gem 'byebug'
 gem 'gosu'
 gem 'json'
-gem 'byebug'
-gem 'pry'
+gem 'pry-byebug'
+gem 'memory_profiler'
+gem 'ruby-prof'
 
-ruby '2.3.1'

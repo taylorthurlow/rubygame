@@ -2,26 +2,34 @@ class Tile < Gosu::Image
   attr_accessor :id, :name, :x, :y, :drawn
 
   def initialize(id)
-    @@tile_sprites ||= Tile.get_tile_sprites
+    @@tile_sprites ||= Tile.tile_sprites
 
     @id = id
-    @name = "Unnamed"
+    @name = 'Unnamed'
     @traversible = false
     @x = nil
     @y = nil
   end
 
-  def pos_x; @x * 16 end
-  def pos_y; @y * 16 end
-  def traversible?; @traversible end
+  def pos_x
+    @x * 16
+  end
+
+  def pos_y
+    @y * 16
+  end
+
+  def traversible?
+    @traversible
+  end
 
   def draw(draw_x, draw_y)
-    z_index = traversible? ? 0 : draw_y
-    @@tile_sprites[id - 1].draw(draw_x, draw_y, z_index)
+    # determine z-index based on y coordinte
+    @@tile_sprites[id - 1].draw(draw_x, draw_y, @traversible ? 0 : draw_y)
   end
 
   def to_s
-    return "#{name} (#{id}) @ #{x}, #{y} #{traversible? ? 'T' : 'NT'}"
+    "#{name} (#{id}) @ #{x}, #{y} #{traversible? ? 'T' : 'NT'}"
   end
 
   def self.factory(id)
@@ -33,13 +41,10 @@ class Tile < Gosu::Image
     when 30, 38; return TileWaves.new(id)
     end
 
-    return Tile.new(id)
+    Tile.new(id)
   end
 
-  private
-  
-  def self.get_tile_sprites
+  def self.tile_sprites
     Gosu::Image.load_tiles($window, 'assets/basictiles.png', 16, 16, true)
   end
-
 end

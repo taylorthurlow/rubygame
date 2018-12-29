@@ -10,82 +10,72 @@ class WorldMap
     data_hash = JSON.parse(map_file)
 
     data = {
-      width:      data_hash['width'],
-      height:     data_hash['height'],
-      tile_size:  data_hash['tileheight'],
-      ground:     [],
-      objects:    []
+      width: data_hash['width'],
+      height: data_hash['height'],
+      tile_size: data_hash['tileheight'],
+      ground: [],
+      objects: []
     }
 
     data_hash['layers'].each do |layer|
-      tile_ids = layer['data'].each_slice(data[:width]).map {|t| t}
-      tile_map = []
-      tile_ids.each do |row|
-        tile_map << row.map {|t| Tile.factory(t)}
-      end
-      data[layer['name'].to_sym] = tile_map
+      tile_ids = layer['data'].each_slice(data[:width]).map { |t| t }
+      data[layer['name'].to_sym] = tile_ids.map { |row| row.map { |t| Tile.factory(t) } }
     end
 
-    return data
+    data
   end
 
   def draw(viewport)
-    viewport.map! {|p| p / data[:tile_size]}
+    viewport.map! { |p| p / data[:tile_size] }
     x0, x1, y0, y1 = viewport.map(&:to_i)
 
     # restrict to prevent re-rendering
-    x0 = 0 if x0 < 0
+    x0 = 0 if x0.negative?
     x1 = data[:width] - 1 if x1 >= data[:width]
-    y0 = 0 if y0 < 0
+    y0 = 0 if y0.negative?
     y1 = data[:height] - 1 if y1 >= data[:height]
 
     (x0..x1).each do |x|
       (y0..y1).each do |y|
-
-        row_ground = data[:ground][y]
-        row_objects = data[:objects][y]
-
-        if row_ground
-          tile_ground = row_ground[x]
-          if tile_ground.id != 0
-            tile_ground.draw(x * @data[:tile_size], y * @data[:tile_size])
+        if data[:ground][y][x]
+          if data[:ground][y][x].id != 0
+            data[:ground][y][x].draw(x * @data[:tile_size], y * @data[:tile_size])
           else
-            tile_ground.drawn = false
+            data[:ground][y][x].drawn = false
           end
 
-          tile_ground.x, tile_ground.y = x, y
+          data[:ground][y][x].x = x
+          data[:ground][y][x].y = y
         end
 
-        if row_objects
-          tile_objects = row_objects[x]
-          if tile_objects.id != 0
-            tile_objects.draw(x * @data[:tile_size], y * @data[:tile_size])
+        if data[:objects][y][x]
+          if data[:objects][y][x].id != 0
+            data[:objects][y][x].draw(x * @data[:tile_size], y * @data[:tile_size])
           else
-            tile_objects.drawn = false
+            data[:objects][y][x].drawn = false
           end
 
-          tile_objects.x, tile_objects.y = x, y
+          # binding.pry
+          data[:objects][y][x].x = x
+          data[:objects][y][x].y = y
         end
-
       end
     end
-
   end
 
   def can_move_to?(x, y)
-    return (data[:objects][y][x].traversible? and data[:ground][y][x].traversible?)
+    (data[:objects][y][x].traversible? && data[:ground][y][x].traversible?)
   end
 
   def tile_at(x, y)
-    object = data[:objects][y][x]
-    if object.id != 0
-      return object
+    if data[:objects][y][x].id != 0
+      data[:objects][y][x]
     else
-      return data[:ground][y][x]
+      data[:ground][y][x]
     end
   end
-  
+
   def tiles_at(x, y)
-    return [data[:ground][y][x], data[:objects][y][x]]
+    [data[:ground][y][x], data[:objects][y][x]]
   end
 end

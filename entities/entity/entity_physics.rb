@@ -6,20 +6,18 @@ class EntityPhysics < Component
 
     @object_pool = object_pool
     @map = object_pool.map
-    game_object.pos_x, game_object.pos_y = [30 * 16, 30 * 16]
+    game_object.pos_x = 30 * 16
+    game_object.pos_y = 30 * 16
     @speed = 0.0
     @stopped_moving = true
   end
 
   def update
-    if attempting_to_move
-      accelerate
-    else
-      decelerate
-    end
+    attempting_to_move ? accelerate : decelerate
 
-    if @speed > 0
-      new_pos_x, new_pos_y = pos_x, pos_y
+    if @speed.positive?
+      new_pos_x = pos_x
+      new_pos_y = pos_y
       shift = Utils.adjust_speed(@speed)
       shift = shift.round
       new_pos_y -= shift if object.input.moving_up
@@ -28,7 +26,8 @@ class EntityPhysics < Component
       new_pos_x += shift if object.input.moving_right
 
       if can_move_to?(new_pos_x.round, new_pos_y.round)
-        object.pos_x, object.pos_y = new_pos_x, new_pos_y
+        object.pos_x = new_pos_x
+        object.pos_y = new_pos_y
       else
         # make a sound possibly
         @speed = 0.0
@@ -39,8 +38,8 @@ class EntityPhysics < Component
 
   def box
     # this is a generic 16x16 collision box, it should be overridden
-    
-    return [
+
+    [
       pos_x - 8,     pos_y - 8,     # top left
       pos_x + 8,     pos_y - 8,     # top right
       pos_x + 8,     pos_y + 8,     # bottom right
@@ -49,7 +48,8 @@ class EntityPhysics < Component
   end
 
   def can_move_to?(pos_x, pos_y)
-    old_pos_x, old_pos_y = object.pos_x, object.pos_y
+    old_pos_x = object.pos_x
+    old_pos_y = object.pos_y
     object.pos_x = pos_x
     object.pos_y = pos_y
 
@@ -64,26 +64,37 @@ class EntityPhysics < Component
       end
     end
 
-    return true
+    true
   ensure
     object.pos_x = old_pos_x
     object.pos_y = old_pos_y
   end
 
   def moving?
-    if @speed > 0
+    if @speed.positive?
       @stopped_moving = false
-      return true
+      true
     else
-      @stopped_moving = true if !@stopped_moving
-      return false
+      @stopped_moving ||= true
+      false
     end
   end
 
-  def tile_above; [x, y - 1] end
-  def tile_left;  [x - 1, y] end
-  def tile_below; [x, y + 1] end
-  def tile_right; [x + 1, y] end
+  def tile_above
+    [x, y - 1]
+  end
+
+  def tile_left
+    [x - 1, y]
+  end
+
+  def tile_below
+    [x, y + 1]
+  end
+
+  def tile_right
+    [x + 1, y]
+  end
 
   private
 
@@ -95,9 +106,9 @@ class EntityPhysics < Component
       box.each_slice(2) do |x, y|
         return true if Utils.point_in_poly(x, y, *poly)
       end
-
-      return false
     end
+
+    false
   end
 
   def accelerate
@@ -105,7 +116,6 @@ class EntityPhysics < Component
   end
 
   def decelerate
-    @speed -= 1 if @speed > 0
+    @speed -= 1 if @speed.positive?
   end
-
 end

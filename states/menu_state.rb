@@ -5,7 +5,7 @@ class MenuState < GameState
   attr_accessor :play_state
 
   def initialize
-    @message = Gosu::Image.from_text("some stupid ruby game", 40)
+    @message = Gosu::Image.from_text('some stupid ruby game', 40)
   end
 
   def enter
@@ -17,7 +17,7 @@ class MenuState < GameState
   end
 
   def update
-    continue_text = @play_state ? "c = continue, " : ""
+    continue_text = @play_state ? 'c = continue, ' : ''
     @info = Gosu::Image.from_text("q = quit, #{continue_text}n = new Game", 30)
   end
 
@@ -33,8 +33,7 @@ class MenuState < GameState
     end
   end
 
-  def button_up(id)
-  end
+  def button_up(id); end
 
   def draw
     @message.draw($window.width / 2 - @message.width / 2, $window.height / 2 - @message.height / 2, 10)

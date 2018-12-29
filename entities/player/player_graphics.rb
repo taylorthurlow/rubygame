@@ -1,5 +1,4 @@
 class PlayerGraphics < HumanGraphics
-
   def initialize(game_object)
     Component.instance_method(:initialize).bind(self).call(game_object)
 
@@ -10,5 +9,4 @@ class PlayerGraphics < HumanGraphics
   def update
     advance_frame
   end
-
 end

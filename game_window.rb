@@ -6,12 +6,15 @@ class GameWindow < Gosu::Window
 
   def initialize
     super(WINDOW_WIDTH, WINDOW_HEIGHT, false)
+    self.caption = 'some stupid ruby game'
+
+    @memory_usage = nil
+    @memory_last_updated = Gosu.milliseconds
   end
 
   def update
     Utils.track_update_interval
     @state.update
-    self.caption = 'some stupid ruby game'
   end
 
   def button_down(id)
@@ -31,8 +34,11 @@ class GameWindow < Gosu::Window
   end
 
   def memory_usage
-    `ps -o rss= -p #{Process.pid}`.chomp.gsub(/(\d)(?=(\d{3})+(\..*)?$)/,'\1,') + ' KB'
-    rescue
-    "Unavailable. Using Windows?"
+    if Gosu.milliseconds - @memory_last_updated >= 1000
+      @memory_last_updated = Gosu.milliseconds
+      @memory_usage = `ps -o rss= -p #{Process.pid}`.chomp.gsub(/(\d)(?=(\d{3})+(\..*)?$)/, '\1,') + ' KB'
+    end
+
+    @memory_usage || 'Unknown'
   end
 end

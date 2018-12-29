@@ -1,5 +1,4 @@
 class HumanGraphics < EntityGraphics
-
   def initialize(game_object)
     Component.instance_method(:initialize).bind(self).call(game_object)
 
@@ -30,9 +29,9 @@ class HumanGraphics < EntityGraphics
         x - 3, y - 3, color,
         x,     y,     color,
         x + 3, y - 3, color,
-        9999)
+        9999
+      )
       i = (i + 1) % 4
     end
   end
-
 end

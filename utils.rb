@@ -5,11 +5,11 @@ module Utils
   end
 
   def self.frame_delay
-    return 100 # milliseconds
+    100 # milliseconds
   end
 
   def self.debug_colors
-    return [
+    [
       Gosu::Color::RED,
       Gosu::Color::BLUE,
       Gosu::Color::YELLOW,
@@ -28,11 +28,13 @@ module Utils
   end
 
   def self.adjust_speed(speed)
-    speed * update_interval / 33.33
+    # divide by update_interval which corresponds to the 'intended' speed of the
+    # game, which is 30fps (33.3333)
+    speed * update_interval / 33.3333
   end
 
   def self.button_down?(button)
-    return $window.button_down?(button)
+    $window.button_down?(button)
   end
 
   def self.rotate(angle, around_x, around_y, *points)
@@ -43,46 +45,49 @@ module Utils
       result << r_x
       result << r_y
     end
-    return result
+
+    result
   end
 
   def self.distance_between(x1, y1, x2, y2)
-    dx = x1 - x2
-    dy = y1 - y2
-    return Math.sqrt(dx * dx + dy * dy)
+    Math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
   end
 
   def self.point_in_poly(testx, testy, *poly)
     nvert = poly.size / 2 # Number of vertices in poly
     vertx = []
     verty = []
+
     poly.each_slice(2) do |x, y|
       vertx << x
       verty << y
     end
+
     inside = false
     j = nvert - 1
+
     (0..nvert - 1).each do |i|
-      if (((verty[i] > testy) != (verty[j] > testy)) &&
-        (testx < (vertx[j] - vertx[i]) * (testy - verty[i]) /
-        (verty[j] - verty[i]) + vertx[i]))
+      if (verty[i] > testy) != (verty[j] > testy) &&
+         (testx < (vertx[j] - vertx[i]) * (testy - verty[i]) /
+         (verty[j] - verty[i]) + vertx[i])
         inside = !inside
       end
       j = i
     end
-    return inside
+
+    inside
   end
 
   def self.direction_angle(direction)
     case direction
     when :north
-      return 180
+      180
     when :east
-      return 90
+      90
     when :south
-      return 0
+      0
     when :west
-      return 270
+      270
     end
   end
 
