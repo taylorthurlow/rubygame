@@ -23,12 +23,12 @@ class MenuState < GameState
 
   def button_down(id)
     case id
-    when Gosu::KbEscape, Gosu::KbQ
+    when Gosu::KB_ESCAPE, Gosu::KB_Q
       $window.close
-    when Gosu::KbN
+    when Gosu::KB_N
       @play_state = PlayState.new
       GameState.switch(@play_state)
-    when Gosu::KbC
+    when Gosu::KB_C
       GameState.switch(@play_state) if @play_state
     end
   end
