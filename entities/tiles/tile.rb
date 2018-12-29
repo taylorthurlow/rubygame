@@ -29,7 +29,7 @@ class Tile < Gosu::Image
   end
 
   def to_s
-    "#{name} (#{id}) @ #{x}, #{y} #{traversible? ? 'T' : 'NT'}"
+    "#{name} (#{id}) @ #{x}, #{y} #{@traversible ? 'T' : 'NT'}"
   end
 
   def self.factory(id)
@@ -45,6 +45,6 @@ class Tile < Gosu::Image
   end
 
   def self.tile_sprites
-    Gosu::Image.load_tiles($window, 'assets/basictiles.png', 16, 16, true)
+    Gosu::Image.load_tiles('assets/basictiles.png', 16, 16, retro: true)
   end
 end

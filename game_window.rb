@@ -5,7 +5,7 @@ class GameWindow < Gosu::Window
   WINDOW_HEIGHT = 600
 
   def initialize
-    super(WINDOW_WIDTH, WINDOW_HEIGHT, false)
+    super(WINDOW_WIDTH, WINDOW_HEIGHT)
     self.caption = 'some stupid ruby game'
 
     @memory_usage = nil

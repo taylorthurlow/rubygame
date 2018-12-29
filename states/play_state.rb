@@ -20,7 +20,7 @@ class PlayState < GameState
 
     # debugging
     $debugging = false
-    @font = Gosu::Font.new($window, Gosu.default_font_name, 20)
+    @font = Gosu::Font.new(24, name: 'monospace', bold: true)
   end
 
   def enter
@@ -71,13 +71,21 @@ class PlayState < GameState
 
   def button_down(id)
     case id
-    when Gosu::KbQ
+    when Gosu::KB_Q
       leave
       $window.close
-    when Gosu::KbEscape
+    when Gosu::KB_ESCAPE
       GameState.switch(MenuState.instance)
-    when Gosu::KbE
+    when Gosu::KB_E
       $debugging = !$debugging
+    when Gosu::KB_0
+      @camera.zoom = 2
+    when Gosu::KB_MINUS
+      @camera.zoom -= 1
+      @camera.zoom = 1 if @camera.zoom < 1
+    when Gosu::KB_EQUALS
+      @camera.zoom += 1
+      @camera.zoom = 3 if @camera.zoom > 3
     end
 
     @player.input.button_down(id)
