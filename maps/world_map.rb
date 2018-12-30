@@ -1,8 +1,9 @@
 class WorldMap
-  attr_accessor :data
+  attr_accessor :data_hash, :map_path
 
   def initialize(map_path)
-    data_hash = load_map(map_path)
+    @data_hash = load_map(map_path)
+    @map_path = map_path
     @tile_size = data_hash['tilewidth']
     @width = data_hash['width']
     @height = data_hash['height']
@@ -17,13 +18,13 @@ class WorldMap
       tile_ids = layer['data'].each_slice(@width)
       data[layer['name'].to_sym] = tile_ids.map do |row|
         row.map do |t|
-          metadata = Tile.metadata(sprite_id: t)
-          klass = if metadata['custom_logic']
-                    Object.const_get('Tile' + metadata['name'].delete(' '))
-                  else
-                    Tile
-                  end
-          klass.new(Tile.metadata(sprite_id: t), self)
+          if t.zero?
+            nil
+          else
+            tile = Tile.new(self, sprite_id: t - 1)
+            tile = Object.const_get(tile.logic_class).new(self, sprite_id: t - 1) if tile.logic_class
+            tile
+          end
         end
       end
     end
@@ -66,7 +67,7 @@ class WorldMap
   # Determine if all tiles at a given coordinate pair in all layers is
   # traversible, and therefore can be moved onto
   def can_move_to?(x, y)
-    @layers.all? { |_, tiles| tiles[y][x].traversible? }
+    @layers.all? { |_, tiles| tiles[y][x].nil? || tiles[y][x].traversible? }
   end
 
   # Get the topmost tile at a given coordinate pair

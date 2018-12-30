@@ -1,22 +1,38 @@
 require 'yaml'
 
 class Tile < Gosu::Image
-  attr_accessor :id, :sprite_id, :sprite, :name, :x, :y
+  attr_accessor :id, :logic_class, :sprite_id, :sprite, :name, :x, :y
 
-  def initialize(metadata, world)
-    @@tile_ids ||= Tile.tile_ids
-    @@tile_sprites ||= { 'missing' => 'assets/missing.png' }
-    @@tile_data ||= Tile.load_tile_data
+  def initialize(world, id: nil, sprite_id: nil)
+    # instantiate all class level variables if necessary
+    Tile.preset_class_vars
+
+    # load tile data from map JSON, will skip if path already loaded
+    Tile.load_tile_data(world.map_path)
+
+    # load metadata from previously loaded tile data given either an id or a
+    # sprite id (only one of the two is necessary)
+    metadata = Tile.metadata(id, sprite_id)
 
     @world = world
     @id = metadata['id']
-    @sprite_id = Array(metadata['sprite']).sample
+    @sprite_id = metadata['sprite_id']
+    @sprite_path = metadata['sprite_path']
     @name = metadata['name']
-    @traversible = metadata['traversible']
-    @sprite = Tile.load_sprite(metadata['sprite_path'], @sprite_id)
+    @colliders = metadata['colliders']
+    @logic_class = metadata['class']
+    @traversible = true
+    @sprite = Tile.load_sprite(@sprite_path, @sprite_id)
+  end
 
-    @x = nil
-    @y = nil
+  def self.metadata(id, sprite_id)
+    raise 'No ID supplied for metadata lookup.' if id.nil? && sprite_id.nil?
+
+    if id
+      @@tile_data[id]
+    elsif sprite_id
+      Tile.find_tile_by_sprite_id(sprite_id)
+    end
   end
 
   def pos_x
@@ -44,23 +60,31 @@ class Tile < Gosu::Image
     "#{name} (#{self.class} SID: #{@sprite_id}) @ #{x}, #{y} #{@traversible ? 'T' : 'NT'}"
   end
 
-  # Get tile metadata given an id or sprite_id
-  def self.metadata(id: nil, sprite_id: nil)
-    @@tile_data ||= load_tile_data
-    raise 'No ID supplied for metadata lookup.' if id.nil? && sprite_id.nil?
+  # Load tile data from file, include id key as a value for convencience
+  def self.load_tile_data(map_path)
+    @@data_files_loaded ||= []
+    return if @@data_files_loaded.include? map_path
 
-    if id
-      @@tile_data[id] || @@tile_data[0]
-    elsif sprite_id
-      data = @@tile_data.find { |_, d| Array(d['sprite']).include? sprite_id }
-      data&.fetch(1) || @@tile_data[0]
+    @@data_files_loaded << map_path
+    JSON.parse(File.read(map_path))['tilesets'].each do |tileset|
+      tileset['tiles'].each do |tile|
+        properties = tile['properties'].to_h { |p| [p['name'], p['value']] }
+        colliders = if tile['objectgroup']
+                      tile['objectgroup']['objects'].map { |c| parse_collider(c) }
+                    else
+                      []
+                    end
+
+        @@tile_data[properties['game_id']] = {
+          'id' => properties['game_id'],
+          'sprite_id' => tile['id'],
+          'sprite_path' => tileset['image'].gsub('../', ''),
+          'name' => properties['name'],
+          'colliders' => colliders,
+          'class' => properties['class']
+        }
+      end
     end
-  end
-
-  # Load tile data from yaml, include id key as a value for convencience
-  def self.load_tile_data
-    data = YAML.safe_load(File.open('entities/tiles/tile_data.yaml'))['tiles']
-    data.each { |id, d| d.merge!('id' => id) }
   end
 
   def self.load_sprite(path, sprite_id)
@@ -70,11 +94,32 @@ class Tile < Gosu::Image
       @@tile_sprites[path] = Gosu::Image.load_tiles(path, 16, 16, retro: true)
     end
 
-    @@tile_sprites[path][sprite_id - 1]
+    @@tile_sprites[path][sprite_id]
   end
 
   # Get a hash with id keys and sprite_id values
   def self.tile_ids
     @@tile_data.map { |id, data| [id, Array(data['sprite'])] }.to_h
+  end
+
+  def self.find_tile_by_sprite_id(sprite_id)
+    @@tile_data.find { |_, d| d['sprite_id'] == sprite_id }&.fetch(1)
+  end
+
+  def self.parse_collider(collider)
+    {
+      x: collider['x'],
+      y: collider['y'],
+      width: collider['width'],
+      height: collider['height'],
+      rotation: collider['rotation']
+    }
+  end
+
+  def self.preset_class_vars
+    @@tile_data ||= {}
+    @@data_files_loaded ||= []
+    @@tile_ids ||= Tile.tile_ids
+    @@tile_sprites ||= {}
   end
 end
