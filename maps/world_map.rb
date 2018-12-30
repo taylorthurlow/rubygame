@@ -1,24 +1,20 @@
 class WorldMap
   attr_accessor :data
 
-  def initialize
-    @data = parse_map_json('maps/test.json')
+  def initialize(map_path)
+    data_hash = load_map(map_path)
+    @tile_size = data_hash['tilewidth']
+    @width = data_hash['width']
+    @height = data_hash['height']
+    @layers = parse_map(data_hash)
   end
 
-  def parse_map_json(path)
-    map_file = File.read(path)
-    data_hash = JSON.parse(map_file)
-
-    data = {
-      width: data_hash['width'],
-      height: data_hash['height'],
-      tile_size: data_hash['tileheight'],
-      ground: [],
-      objects: []
-    }
-
+  # Consume the data hash directly from Tiled and construct tile objects to
+  # form the map, returning the a hash containing each layer
+  def parse_map(data_hash)
+    data = {}
     data_hash['layers'].each do |layer|
-      tile_ids = layer['data'].each_slice(data[:width]).map { |t| t }
+      tile_ids = layer['data'].each_slice(@width)
       data[layer['name'].to_sym] = tile_ids.map do |row|
         row.map do |t|
           metadata = Tile.metadata(sprite_id: t)
@@ -35,56 +31,57 @@ class WorldMap
     data
   end
 
+  # Perform the draw of the map data onto the screen
   def draw(viewport)
-    viewport.map! { |p| p / data[:tile_size] }
+    viewport.map! { |p| p / @tile_size }
     x0, x1, y0, y1 = viewport.map(&:to_i)
 
     # restrict to prevent re-rendering
     x0 = 0 if x0.negative?
-    x1 = data[:width] - 1 if x1 >= data[:width]
+    x1 = @width - 1 if x1 >= @width
     y0 = 0 if y0.negative?
-    y1 = data[:height] - 1 if y1 >= data[:height]
+    y1 = @height - 1 if y1 >= @height
 
     (x0..x1).each do |x|
       (y0..y1).each do |y|
-        if data[:ground][y][x]
-          if data[:ground][y][x].id != 0
-            data[:ground][y][x].draw(x * @data[:tile_size], y * @data[:tile_size])
+        @layers.each do |_, tiles|
+          next unless tiles[y][x]
+
+          if tiles[y][x].id != 0
+            tiles[y][x].draw(x * @tile_size, y * @tile_size)
           end
 
-          data[:ground][y][x].x = x
-          data[:ground][y][x].y = y
-        end
-
-        if data[:objects][y][x]
-          if data[:objects][y][x].id != 0
-            data[:objects][y][x].draw(x * @data[:tile_size], y * @data[:tile_size])
-          end
-
-          data[:objects][y][x].x = x
-          data[:objects][y][x].y = y
+          tiles[y][x].x = x
+          tiles[y][x].y = y
         end
       end
     end
   end
 
-  def set_tile_at(x, y, new_tile, object: false)
-    data[object ? :objects : :ground][y][x] = new_tile
+  # Set the tile at a given coordinate pair and layer to a new tile
+  def set_tile_at(x, y, new_tile, layer: :ground)
+    @layers[layer][y][x] = new_tile
   end
 
+  # Determine if all tiles at a given coordinate pair in all layers is
+  # traversible, and therefore can be moved onto
   def can_move_to?(x, y)
-    (data[:objects][y][x].traversible? && data[:ground][y][x].traversible?)
+    @layers.all? { |_, tiles| tiles[y][x].traversible? }
   end
 
+  # Get the topmost tile at a given coordinate pair
   def tile_at(x, y)
-    if data[:objects][y][x].id != 0
-      data[:objects][y][x]
-    else
-      data[:ground][y][x]
-    end
+    tiles_at(x, y).last
   end
 
+  # Get a list of tiles at a given coordinate pair, in order of bottom to top
   def tiles_at(x, y)
-    [data[:ground][y][x], data[:objects][y][x]]
+    @layers.map { |_, tiles| tiles[y][x] }.compact
+  end
+
+  private
+
+  def load_map(path)
+    JSON.parse(File.read(path))
   end
 end
