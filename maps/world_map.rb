@@ -19,7 +19,17 @@ class WorldMap
 
     data_hash['layers'].each do |layer|
       tile_ids = layer['data'].each_slice(data[:width]).map { |t| t }
-      data[layer['name'].to_sym] = tile_ids.map { |row| row.map { |t| Tile.new(Tile.metadata(sprite_id: t)) } }
+      data[layer['name'].to_sym] = tile_ids.map do |row|
+        row.map do |t|
+          metadata = Tile.metadata(sprite_id: t)
+          klass = if metadata['custom_logic']
+                    Object.const_get('Tile' + metadata['name'].delete(' '))
+                  else
+                    Tile
+                  end
+          klass.new(Tile.metadata(sprite_id: t), self)
+        end
+      end
     end
 
     data
@@ -56,6 +66,10 @@ class WorldMap
         end
       end
     end
+  end
+
+  def set_tile_at(x, y, new_tile, object: false)
+    data[object ? :objects : :ground][y][x] = new_tile
   end
 
   def can_move_to?(x, y)

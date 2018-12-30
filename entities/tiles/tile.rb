@@ -3,11 +3,12 @@ require 'yaml'
 class Tile < Gosu::Image
   attr_accessor :id, :sprite_id, :sprite, :name, :x, :y
 
-  def initialize(metadata)
+  def initialize(metadata, world)
     @@tile_ids ||= Tile.tile_ids
     @@tile_sprites ||= { 'missing' => 'assets/missing.png' }
     @@tile_data ||= Tile.load_tile_data
 
+    @world = world
     @id = metadata['id']
     @sprite_id = Array(metadata['sprite']).sample
     @name = metadata['name']
@@ -30,13 +31,17 @@ class Tile < Gosu::Image
     @traversible
   end
 
+  def interact
+    # override this
+  end
+
   def draw(draw_x, draw_y)
     # determine z-index based on y coordinte
     @sprite.draw(draw_x, draw_y, @traversible ? 0 : draw_y) unless id.zero?
   end
 
   def to_s
-    "#{name} (ID: #{@id}, SID: #{@sprite_id}) @ #{x}, #{y} #{@traversible ? 'T' : 'NT'}"
+    "#{name} (#{self.class} SID: #{@sprite_id}) @ #{x}, #{y} #{@traversible ? 'T' : 'NT'}"
   end
 
   # Get tile metadata given an id or sprite_id
@@ -44,13 +49,12 @@ class Tile < Gosu::Image
     @@tile_data ||= load_tile_data
     raise 'No ID supplied for metadata lookup.' if id.nil? && sprite_id.nil?
 
-    sprite = if id
-               @@tile_data[id]
-             elsif sprite_id
-               @@tile_data.find { |_, data| Array(data['sprite']).include? sprite_id }
-             end
-
-    sprite&.fetch(1) || @@tile_data[0] # empty tile if can't find sprite id
+    if id
+      @@tile_data[id] || @@tile_data[0]
+    elsif sprite_id
+      data = @@tile_data.find { |_, d| Array(d['sprite']).include? sprite_id }
+      data&.fetch(1) || @@tile_data[0]
+    end
   end
 
   # Load tile data from yaml, include id key as a value for convencience

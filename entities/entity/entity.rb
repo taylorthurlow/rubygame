@@ -9,5 +9,4 @@ class Entity < GameObject
     @sounds = EntitySounds.new(self)
     @direction = :south
   end
-
 end
