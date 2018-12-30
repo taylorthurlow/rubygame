@@ -4,7 +4,7 @@ class TileDoor < Tile
   end
 
   def interact
-    puts "Interacting with: #{self}"
+    puts "Interacting with: #{self}" if $debugging
     new_id = open? ? 6 : 5
     new_tile = TileDoor.new(Tile.metadata(id: new_id), @world)
     @world.set_tile_at(@x, @y, new_tile, object: true)
