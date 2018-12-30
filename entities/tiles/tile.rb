@@ -1,5 +1,3 @@
-require 'yaml'
-
 class Tile < Gosu::Image
   attr_accessor :id, :logic_class, :sprite_id, :sprite, :name, :x, :y
 
