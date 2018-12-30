@@ -28,6 +28,10 @@ class EntityPhysics < Component
       if can_move_to?(new_pos_x.round, new_pos_y.round)
         object.pos_x = new_pos_x
         object.pos_y = new_pos_y
+      elsif can_move_to?(new_pos_x.round, pos_y)
+        object.pos_x = new_pos_x
+      elsif can_move_to?(pos_x, new_pos_y.round)
+        object.pos_y = new_pos_y
       else
         # make a sound possibly
         @speed = 0.0
