@@ -19,7 +19,7 @@ class WorldMap
 
     data_hash['layers'].each do |layer|
       tile_ids = layer['data'].each_slice(data[:width]).map { |t| t }
-      data[layer['name'].to_sym] = tile_ids.map { |row| row.map { |t| Tile.factory(t) } }
+      data[layer['name'].to_sym] = tile_ids.map { |row| row.map { |t| Tile.new(Tile.metadata(sprite_id: t)) } }
     end
 
     data
@@ -40,8 +40,6 @@ class WorldMap
         if data[:ground][y][x]
           if data[:ground][y][x].id != 0
             data[:ground][y][x].draw(x * @data[:tile_size], y * @data[:tile_size])
-          else
-            data[:ground][y][x].drawn = false
           end
 
           data[:ground][y][x].x = x
@@ -51,11 +49,8 @@ class WorldMap
         if data[:objects][y][x]
           if data[:objects][y][x].id != 0
             data[:objects][y][x].draw(x * @data[:tile_size], y * @data[:tile_size])
-          else
-            data[:objects][y][x].drawn = false
           end
 
-          # binding.pry
           data[:objects][y][x].x = x
           data[:objects][y][x].y = y
         end

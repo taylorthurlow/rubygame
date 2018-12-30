@@ -1,0 +1,43 @@
+tiles:
+  0:
+    name: Empty
+    sprite: 0
+    traversible: true
+  1:
+    name: Dirt
+    sprite: 11
+    traversible: true
+  2:
+    name: Grass
+    sprite: [12, 13, 65, 66]
+    traversible: true
+  3:
+    name: Water
+    sprite: 14
+    traversible: false
+  4:
+    name: Waves
+    sprite: [30, 38]
+    traversible: false
+  5:
+    name: Door
+    sprite: 49
+    traversible: false
+    custom_logic: true
+  6:
+    name: Door
+    sprite: 50
+    traversible: true
+    custom_logic: true
+  7:
+    name: Diagonal Hardwood
+    sprite: 9
+    traversible: true
+  8:
+    name: Vertical Hardwood
+    sprite: 17
+    traversible: true
+  9:
+    name: Ornate Tile
+    sprite: 18
+    traversible: true
