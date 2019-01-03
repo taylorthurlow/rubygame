@@ -8,15 +8,6 @@ module Utils
     100 # milliseconds
   end
 
-  def self.debug_colors
-    [
-      Gosu::Color::RED,
-      Gosu::Color::BLUE,
-      Gosu::Color::YELLOW,
-      Gosu::Color::WHITE
-    ]
-  end
-
   def self.track_update_interval
     now = Gosu.milliseconds
     @update_interval = (now - (@last_update ||= 0)).to_f
@@ -51,37 +42,6 @@ module Utils
 
   def self.distance_between(x1, y1, x2, y2)
     Math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
-  end
-
-  def self.distance_between_polygons(p1, p2)
-    p1.each_slice(2).map do |p1a, p1b|
-      p2.each_slice(2).map { |p2a, p2b| Utils.distance_between(p1a, p1b, p2a, p2b) }
-    end.flatten.min
-  end
-
-  def self.point_in_poly(testx, testy, *poly)
-    nvert = poly.size / 2 # Number of vertices in poly
-    vertx = []
-    verty = []
-
-    poly.each_slice(2) do |x, y|
-      vertx << x
-      verty << y
-    end
-
-    inside = false
-    j = nvert - 1
-
-    (0..nvert - 1).each do |i|
-      if (verty[i] > testy) != (verty[j] > testy) &&
-         (testx < (vertx[j] - vertx[i]) * (testy - verty[i]) /
-         (verty[j] - verty[i]) + vertx[i])
-        inside = !inside
-      end
-      j = i
-    end
-
-    inside
   end
 
   def self.draw_box(x, y, width, height, color = 0x6F_FF00FF)
