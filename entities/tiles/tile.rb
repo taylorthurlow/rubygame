@@ -20,7 +20,6 @@ class Tile < Gosu::Image
     @colliders = metadata['colliders'].map(&:clone)
     @colliders.each { |c| c.tile = self }
     @logic_class = metadata['class']
-    @traversible = true
     @sprite = Tile.load_sprite(@sprite_path, @sprite_id)
   end
 
@@ -42,10 +41,6 @@ class Tile < Gosu::Image
     @y * 16
   end
 
-  def traversible?
-    @traversible
-  end
-
   def interact
     # override this
     false
@@ -58,7 +53,7 @@ class Tile < Gosu::Image
   end
 
   def to_s
-    "#{name} (#{self.class} SID: #{@sprite_id}) @ #{x}, #{y} #{@traversible ? 'T' : 'NT'}"
+    "#{name} (#{self.class} SID: #{@sprite_id}) @ #{x}, #{y}"
   end
 
   # Load tile data from file, include id key as a value for convencience
