@@ -14,4 +14,8 @@ class Human < Entity
     @pos_x = 32 * 16
     @pos_y = 32 * 16
   end
+
+  def to_s
+    "Player: #{pos_x / 16}, #{pos_y / 16} (#{pos_x}, #{pos_y}), Direction: #{direction}"
+  end
 end

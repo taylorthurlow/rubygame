@@ -22,6 +22,10 @@ class Camera
     y0 = @pos_y - ($window.height / 2) / @zoom
     y1 = @pos_y + ($window.height / 2) / @zoom
 
-    return [x0, x1, y0, y1]
+    [x0, x1, y0, y1]
+  end
+
+  def to_s
+    "#{pos_x}, #{pos_y} (#{@zoom}x)"
   end
 end
