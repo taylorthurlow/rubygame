@@ -11,7 +11,7 @@ class HumanPhysics < EntityPhysics
     game_object.pos_y = 30 * 16
     @speed = 0.0
     @stopped_moving = true
-    @colliders = [EntityCollider.new(10, 4, self)]
+    @colliders = [EntityCollider.new(10, 7, self)]
   end
 
   def coord_facing(distance = 1)
