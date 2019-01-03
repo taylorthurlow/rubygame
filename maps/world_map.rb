@@ -1,9 +1,10 @@
 class WorldMap
-  attr_accessor :data_hash, :map_path, :layers, :width, :height, :entities
+  attr_accessor :data_hash, :map_path, :tileset_path, :layers, :width, :height, :entities
 
-  def initialize(map_path)
+  def initialize(map_path, tileset_path)
     @data_hash = load_map(map_path)
     @map_path = map_path
+    @tileset_path = tileset_path
     @tile_size = data_hash['tilewidth']
     @width = data_hash['width']
     @height = data_hash['height']

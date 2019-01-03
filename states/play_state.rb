@@ -5,7 +5,7 @@ class PlayState < GameState
   attr_accessor :update_interval, :debugging
 
   def initialize
-    @map = WorldMap.new 'maps/test.json'
+    @map = WorldMap.new('maps/cave.json', 'maps/tileset.json')
     @camera = Camera.new
     @object_pool = ObjectPool.new(@map)
 

@@ -6,7 +6,7 @@ class Tile < Gosu::Image
     Tile.preset_class_vars
 
     # load tile data from map JSON, will skip if path already loaded
-    Tile.load_tile_data(world.map_path)
+    Tile.load_tile_data(world.tileset_path)
 
     # load metadata from previously loaded tile data given either an id or a
     # sprite id (only one of the two is necessary)
@@ -57,29 +57,28 @@ class Tile < Gosu::Image
   end
 
   # Load tile data from file, include id key as a value for convencience
-  def self.load_tile_data(map_path)
+  def self.load_tile_data(tileset_path)
     @@data_files_loaded ||= []
-    return if @@data_files_loaded.include? map_path
+    return if @@data_files_loaded.include? tileset_path
 
-    @@data_files_loaded << map_path
-    JSON.parse(File.read(map_path))['tilesets'].each do |tileset|
-      tileset['tiles'].each do |tile|
-        properties = tile['properties'].to_h { |p| [p['name'], p['value']] }
-        colliders = if tile['objectgroup']
-                      tile['objectgroup']['objects'].map { |c| TileCollider.new_from_json(c) }
-                    else
-                      []
-                    end
+    @@data_files_loaded << tileset_path
+    parsed = JSON.parse(File.read(tileset_path))
+    parsed['tiles'].each do |tile|
+      properties = tile['properties'].to_h { |p| [p['name'], p['value']] }
+      colliders = if tile['objectgroup']
+                    tile['objectgroup']['objects'].map { |c| TileCollider.new_from_json(c) }
+                  else
+                    []
+                  end
 
-        @@tile_data[properties['game_id']] = {
-          'id' => properties['game_id'],
-          'name' => properties['name'],
-          'sprite_id' => tile['id'],
-          'sprite_path' => tileset['image'].gsub('../', ''),
-          'colliders' => colliders,
-          'class' => properties['class']
-        }
-      end
+      @@tile_data[properties['game_id']] = {
+        'id' => properties['game_id'],
+        'name' => properties['name'],
+        'sprite_id' => tile['id'],
+        'sprite_path' => parsed['image'].gsub('../', ''),
+        'colliders' => colliders,
+        'class' => properties['class']
+      }
     end
   end
 

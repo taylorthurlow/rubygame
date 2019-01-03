@@ -7,8 +7,8 @@ class HumanPhysics < EntityPhysics
 
     @object_pool = object_pool
     @map = object_pool.map
-    game_object.pos_x = 30 * 16
-    game_object.pos_y = 30 * 16
+    game_object.pos_x = 12 * 16
+    game_object.pos_y = 15 * 16
     @speed = 0.0
     @stopped_moving = true
     @colliders = [EntityCollider.new(10, 7, self)]
