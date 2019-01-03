@@ -14,9 +14,9 @@ class PlayState < GameState
     @camera.target = @player
 
     # npcs
-    1.times do
-      Human.new(@object_pool, AiInput.new)
-    end
+    # 1.times do
+    #   Human.new(@object_pool, AiInput.new)
+    # end
 
     # debugging
     $debugging = false
@@ -66,6 +66,7 @@ class PlayState < GameState
       @font.draw_text("Camera: #{@camera.pos_x}, #{@camera.pos_y}", 0, 40, 9999, 1, 1, Gosu::Color::YELLOW)
       @font.draw_text(player_info, 0, 60, 9999, 1, 1, Gosu::Color::YELLOW)
       @font.draw_text("Facing: #{@tiles_facing.map(&:id)}, #{@tile_facing}", 0, 80, 9999, 1, 1, Gosu::Color::YELLOW)
+      @font.draw_text("Surround: #{@map.surrounding_tiles(@player.pos_x / 16, @player.pos_y / 16).map(&:id)}", 0, 100, 9999, 1, 1, Gosu::Color::YELLOW)
     end
   end
 
@@ -85,7 +86,7 @@ class PlayState < GameState
       @camera.zoom = 1 if @camera.zoom < 1
     when Gosu::KB_EQUALS
       @camera.zoom += 1
-      @camera.zoom = 3 if @camera.zoom > 3
+      @camera.zoom = 6 if @camera.zoom > 6
     end
 
     @player.input.button_down(id)

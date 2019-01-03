@@ -12,11 +12,14 @@ class EntityGraphics < Component
 
   def draw(viewport)
     if object.physics.moving? || object.physics.stopped_moving
-      select_frame.draw(pos_x - 8, pos_y - 8, pos_y)
+      select_frame.draw(pos_x - 8, pos_y - 12, pos_y)
       object.physics.stopped_moving = false
     end
 
-    draw_bounding_box if $debugging
+    if $debugging
+      draw_bounding_box
+      draw_position
+    end
   end
 
   private
@@ -27,6 +30,11 @@ class EntityGraphics < Component
 
   def draw_bounding_box
     # override
+  end
+
+  def draw_position
+    Utils.draw_box(pos_x - 1, pos_y - 1, 2, 2, 0xFF_FF0000)
+    Utils.draw_box(x * 16, y * 16, 16, 16, 0x45_000000)
   end
 
   def animation

@@ -1,5 +1,5 @@
 class Tile < Gosu::Image
-  attr_accessor :id, :logic_class, :sprite_id, :sprite, :name, :x, :y
+  attr_accessor :id, :logic_class, :sprite_id, :sprite, :name, :x, :y, :colliders
 
   def initialize(world, id: nil, sprite_id: nil)
     # instantiate all class level variables if necessary
@@ -17,7 +17,8 @@ class Tile < Gosu::Image
     @sprite_id = metadata['sprite_id']
     @sprite_path = metadata['sprite_path']
     @name = metadata['name']
-    @colliders = metadata['colliders']
+    @colliders = metadata['colliders'].map(&:clone)
+    @colliders.each { |c| c.tile = self }
     @logic_class = metadata['class']
     @traversible = true
     @sprite = Tile.load_sprite(@sprite_path, @sprite_id)
@@ -50,8 +51,9 @@ class Tile < Gosu::Image
   end
 
   def draw(draw_x, draw_y)
-    # determine z-index based on y coordinte
-    @sprite.draw(draw_x, draw_y, @traversible ? 0 : draw_y) unless id.zero?
+    # determine z-index based on y coordinate
+    @sprite.draw(draw_x, draw_y, @colliders.empty? ? 0 : draw_y + 16) unless id.zero?
+    @colliders.each(&:draw_bounding_box) if $debugging
   end
 
   def to_s
@@ -68,16 +70,16 @@ class Tile < Gosu::Image
       tileset['tiles'].each do |tile|
         properties = tile['properties'].to_h { |p| [p['name'], p['value']] }
         colliders = if tile['objectgroup']
-                      tile['objectgroup']['objects'].map { |c| parse_collider(c) }
+                      tile['objectgroup']['objects'].map { |c| TileCollider.new_from_json(c) }
                     else
                       []
                     end
 
         @@tile_data[properties['game_id']] = {
           'id' => properties['game_id'],
+          'name' => properties['name'],
           'sprite_id' => tile['id'],
           'sprite_path' => tileset['image'].gsub('../', ''),
-          'name' => properties['name'],
           'colliders' => colliders,
           'class' => properties['class']
         }
@@ -102,16 +104,6 @@ class Tile < Gosu::Image
 
   def self.find_tile_by_sprite_id(sprite_id)
     @@tile_data.find { |_, d| d['sprite_id'] == sprite_id }&.fetch(1)
-  end
-
-  def self.parse_collider(collider)
-    {
-      x: collider['x'],
-      y: collider['y'],
-      width: collider['width'],
-      height: collider['height'],
-      rotation: collider['rotation']
-    }
   end
 
   def self.preset_class_vars

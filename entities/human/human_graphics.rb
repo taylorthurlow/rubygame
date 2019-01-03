@@ -22,16 +22,6 @@ class HumanGraphics < EntityGraphics
   private
 
   def draw_bounding_box
-    i = 0
-    object.physics.box.each_slice(2) do |x, y|
-      color = Utils.debug_colors[i]
-      $window.draw_triangle(
-        x - 3, y - 3, color,
-        x,     y,     color,
-        x + 3, y - 3, color,
-        9999
-      )
-      i = (i + 1) % 4
-    end
+    object.physics.colliders.each(&:draw_bounding_box)
   end
 end

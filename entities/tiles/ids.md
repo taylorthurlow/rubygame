@@ -9,3 +9,7 @@
 9. Closed Door
 10. Open Door
 11. Ornate Tile
+12. Red Brick 1
+13. Red Brick 2
+14. Red Brick 3
+15. Red Brick 4

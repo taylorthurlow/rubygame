@@ -53,6 +53,12 @@ module Utils
     Math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
   end
 
+  def self.distance_between_polygons(p1, p2)
+    p1.each_slice(2).map do |p1a, p1b|
+      p2.each_slice(2).map { |p2a, p2b| Utils.distance_between(p1a, p1b, p2a, p2b) }
+    end.flatten.min
+  end
+
   def self.point_in_poly(testx, testy, *poly)
     nvert = poly.size / 2 # Number of vertices in poly
     vertx = []
@@ -76,6 +82,10 @@ module Utils
     end
 
     inside
+  end
+
+  def self.draw_box(x, y, width, height, color = 0x6F_FF00FF)
+    $window.draw_rect(x, y, width, height, Gosu::Color.argb(color), 9999)
   end
 
   def self.direction_angle(direction)

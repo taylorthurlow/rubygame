@@ -1,5 +1,6 @@
 class HumanPhysics < EntityPhysics
-  attr_accessor :speed, :stopped_moving, :attempting_to_move
+  attr_accessor :speed, :stopped_moving, :attempting_to_move, :colliders,
+                :width, :height
 
   def initialize(game_object, object_pool)
     Component.instance_method(:initialize).bind(self).call(game_object)
@@ -10,24 +11,7 @@ class HumanPhysics < EntityPhysics
     game_object.pos_y = 30 * 16
     @speed = 0.0
     @stopped_moving = true
-  end
-
-  def box
-    # standard human textures are 16x16, but the actual sprite is
-    # only 10 pixels wide (3px blank, 10px content, 3px blank)
-    #
-    # additionally, top half of sprite is not collidable to prevent
-    # head from colliding with objects
-
-    w = 8 / 2
-    h = 16 / 2
-
-    [
-      pos_x - w, pos_y,     # top left
-      pos_x + w, pos_y,     # top right
-      pos_x + w, pos_y + h, # bottom right
-      pos_x - w, pos_y + h, # bottom left
-    ]
+    @colliders = [EntityCollider.new(10, 4, self)]
   end
 
   def coord_facing

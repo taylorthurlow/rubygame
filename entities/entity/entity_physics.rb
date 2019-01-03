@@ -10,6 +10,15 @@ class EntityPhysics < Component
     game_object.pos_y = 30 * 16
     @speed = 0.0
     @stopped_moving = true
+    @colliders = []
+  end
+
+  def pos_x
+    object.pos_x
+  end
+
+  def pos_y
+    object.pos_y
   end
 
   def update
@@ -18,37 +27,24 @@ class EntityPhysics < Component
     if @speed.positive?
       new_pos_x = pos_x
       new_pos_y = pos_y
-      shift = Utils.adjust_speed(@speed)
-      shift = shift.round
+      shift = Utils.adjust_speed(@speed).round
       new_pos_y -= shift if object.input.moving_up
       new_pos_x -= shift if object.input.moving_left
       new_pos_y += shift if object.input.moving_down
       new_pos_x += shift if object.input.moving_right
 
-      if can_move_to?(new_pos_x.round, new_pos_y.round)
+      if can_move_to?(new_pos_x, new_pos_y)
         object.pos_x = new_pos_x
         object.pos_y = new_pos_y
-      elsif can_move_to?(new_pos_x.round, pos_y)
+      elsif can_move_to?(new_pos_x, pos_y)
         object.pos_x = new_pos_x
-      elsif can_move_to?(pos_x, new_pos_y.round)
+      elsif can_move_to?(pos_x, new_pos_y)
         object.pos_y = new_pos_y
       else
         # make a sound possibly
         @speed = 0.0
       end
-
     end
-  end
-
-  def box
-    # this is a generic 16x16 collision box, it should be overridden
-
-    [
-      pos_x - 8,     pos_y - 8,     # top left
-      pos_x + 8,     pos_y - 8,     # top right
-      pos_x + 8,     pos_y + 8,     # bottom right
-      pos_x - 8,     pos_y + 8,     # bottom left
-    ]
   end
 
   def can_move_to?(pos_x, pos_y)
@@ -57,14 +53,20 @@ class EntityPhysics < Component
     object.pos_x = pos_x
     object.pos_y = pos_y
 
-    return false unless @map.can_move_to?(pos_x / 16, pos_y / 16)
+    # @object_pool.nearby(object, 100).each do |obj|
+    #   next unless collides_with_poly?(obj.physics.box)
 
-    @object_pool.nearby(object, 100).each do |obj|
-      if collides_with_poly?(obj.physics.box)
-        # helps get unstuck
-        old_distance = Utils.distance_between(obj.pos_x, obj.pos_y, old_pos_x, old_pos_y)
-        new_distance = Utils.distance_between(obj.pos_x, obj.pos_y, pos_x, pos_y)
-        return false if new_distance < old_distance
+    #   # helps get unstuck by only blocking movement towards the colliding
+    #   # object. walking away from it should be unrestricted. potentially some
+    #   # room for exploitation here, though
+    #   old_distance = Utils.distance_between(obj.pos_x, obj.pos_y, old_pos_x, old_pos_y)
+    #   new_distance = Utils.distance_between(obj.pos_x, obj.pos_y, pos_x, pos_y)
+    #   return false if new_distance < old_distance
+    # end
+
+    @map.surrounding_tiles(object.pos_x / 16, object.pos_y / 16).each do |t|
+      return false if t.colliders.any? do |c|
+        @colliders.any? { |ec| Collider.collision?(c, ec) }
       end
     end
 
@@ -101,19 +103,6 @@ class EntityPhysics < Component
   end
 
   private
-
-  def collides_with_poly?(poly)
-    if poly
-      poly.each_slice(2) do |x, y|
-        return true if Utils.point_in_poly(x, y, *box)
-      end
-      box.each_slice(2) do |x, y|
-        return true if Utils.point_in_poly(x, y, *poly)
-      end
-    end
-
-    false
-  end
 
   def accelerate
     @speed += 1 if @speed < 2
