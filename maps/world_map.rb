@@ -1,5 +1,5 @@
 class WorldMap
-  attr_accessor :data_hash, :map_path, :layers, :width, :height
+  attr_accessor :data_hash, :map_path, :layers, :width, :height, :entities
 
   def initialize(map_path)
     @data_hash = load_map(map_path)
@@ -8,6 +8,7 @@ class WorldMap
     @width = data_hash['width']
     @height = data_hash['height']
     @layers = parse_map(data_hash)
+    @entities = []
   end
 
   # Consume the data hash directly from Tiled and construct tile objects to

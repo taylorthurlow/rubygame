@@ -11,6 +11,7 @@ class PlayState < GameState
 
     # player
     @player = Player.new(@object_pool, PlayerInput.new(@camera))
+    @map.entities << @player
     @camera.target = @player
 
     # npcs

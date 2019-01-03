@@ -53,7 +53,7 @@ class Tile < Gosu::Image
 
   def draw(draw_x, draw_y)
     # determine z-index based on y coordinate
-    @sprite.draw(draw_x, draw_y, @colliders.empty? ? 0 : draw_y + 16) unless id.zero?
+    @sprite.draw(draw_x, draw_y, @colliders.empty? ? 0 : draw_y + 15) unless id.zero?
     @colliders.each(&:draw_bounding_box) if $debugging
   end
 

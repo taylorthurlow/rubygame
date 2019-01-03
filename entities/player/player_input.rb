@@ -57,6 +57,6 @@ class PlayerInput < Component
       return true if Utils.button_down?(b)
     end
 
-    return false
+    false
   end
 end
