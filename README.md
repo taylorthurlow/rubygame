@@ -5,5 +5,5 @@ There are a bunch of dependencies which I should list here, but haven't gotten a
 Here's what it looks like right now:
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/761640/50534987-56bef380-0af9-11e9-8794-222b3faf866a.png">
+  <img src="https://user-images.githubusercontent.com/761640/50658406-196dc200-0f4e-11e9-8cf2-034525a1138b.png">
 </p>
