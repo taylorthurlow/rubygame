@@ -48,6 +48,7 @@ class Tile < Gosu::Image
 
   def interact
     # override this
+    false
   end
 
   def draw(draw_x, draw_y)

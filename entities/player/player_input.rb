@@ -36,7 +36,8 @@ class PlayerInput < Component
     when Gosu::KB_D
       object.direction = :east
     when Gosu::KB_SPACE
-      object.physics.tiles_facing.each(&:interact)
+      interacted = object.physics.tile.interact
+      object.physics.tiles_facing.each(&:interact) unless interacted
     end
   end
 

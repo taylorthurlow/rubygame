@@ -1,5 +1,5 @@
 class WorldMap
-  attr_accessor :data_hash, :map_path, :layers
+  attr_accessor :data_hash, :map_path, :layers, :width, :height
 
   def initialize(map_path)
     @data_hash = load_map(map_path)
