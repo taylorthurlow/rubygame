@@ -1,4 +1,14 @@
 module Utils
+  def self.draw_scaled(camera)
+    off_x = $window.width / 2 - camera.pos_x
+    off_y = $window.height / 2 - camera.pos_y
+
+    $window.translate(off_x, off_y) do
+      $window.scale(camera.zoom, camera.zoom, camera.pos_x, camera.pos_y) do
+        yield(camera.viewport)
+      end
+    end
+  end
 
   def self.media_path(file)
     File.join(File.dirname(file.dirname(__FILE__)), 'assets', file)

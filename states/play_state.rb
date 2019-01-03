@@ -43,16 +43,9 @@ class PlayState < GameState
   end
 
   def draw
-    off_x = $window.width / 2 - @camera.pos_x
-    off_y = $window.height / 2 - @camera.pos_y
-    viewport = @camera.viewport
-
-    $window.translate(off_x, off_y) do
-      $window.scale(@camera.zoom, @camera.zoom, @camera.pos_x, @camera.pos_y) do
-        @map.draw(viewport)
-        @object_pool.objects.map { |o| o.draw(viewport) }
-        @debug.draw_select_highlight if $debugging
-      end
+    Utils.draw_scaled(@camera) do |viewport|
+      @map.draw(viewport)
+      @object_pool.objects.map { |o| o.draw(viewport) }
     end
 
     @debug.draw if $debugging

@@ -16,12 +16,14 @@ class Debug
   end
 
   def draw_select_highlight
-    Gosu.draw_rect(@tiles_facing.first.pos_x,
-                   @tiles_facing.first.pos_y,
-                   16,
-                   16,
-                   Gosu::Color.argb(0x3F_00FF00),
-                   9999)
+    Utils.draw_scaled(@camera) do |viewport|
+      Gosu.draw_rect(@tiles_facing.first.pos_x,
+                     @tiles_facing.first.pos_y,
+                     16,
+                     16,
+                     Gosu::Color.argb(0x3F_00FF00),
+                     9999)
+    end
   end
 
   private
@@ -40,7 +42,7 @@ class Debug
     draw_debug_line(1, "Memory: #{$window.memory_usage}")
     draw_debug_line(2, "Camera: #{@camera}")
     draw_debug_line(3, "Player: #{@player}")
-    draw_debug_line(4, "Facing: #{@tiles_facing.map(&:id)}, #{@tiles_facing.first}")
+    draw_debug_line(4, "Facing: #{@tiles_facing.map(&:id)}, #{@tiles_facing.last}")
   end
 
   def draw_fps_meter
