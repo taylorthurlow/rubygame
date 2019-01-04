@@ -35,6 +35,9 @@ class PlayerInput < Component
       object.direction = :south
     when Gosu::KB_D
       object.direction = :east
+    when Gosu::KB_RETURN
+      new_name = $window.state.scene.name == 'cave_scene' ? 'meadow_scene' : 'cave_scene'
+      $window.state.scene.transition_to(new_name)
     when Gosu::KB_SPACE
       interacted = object.physics.tile.interact
       object.physics.tiles_facing.each(&:interact) unless interacted

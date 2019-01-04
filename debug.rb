@@ -43,7 +43,7 @@ class Debug
     draw_debug_line(2, "Camera: #{@camera}")
     draw_debug_line(3, "Player: #{@player}")
     draw_debug_line(4, "Facing: #{@tiles_facing.map(&:id)}, #{@tiles_facing.last}")
-    draw_debug_line(5, "Scene: #{@scene}")
+    draw_debug_line(5, "Scene: #{@state.scene}")
   end
 
   def draw_fps_meter

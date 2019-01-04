@@ -1,14 +1,13 @@
 class HumanPhysics < EntityPhysics
   attr_accessor :speed, :stopped_moving, :attempting_to_move, :colliders,
-                :width, :height
+                :width, :height, :scene
 
   def initialize(game_object, scene)
     Component.instance_method(:initialize).bind(self).call(game_object)
 
-    @object_pool = scene.object_pool
-    @map = scene.map
-    game_object.pos_x = 12 * 16
-    game_object.pos_y = 15 * 16
+    @scene = scene
+    game_object.pos_x = scene.spawn[0] * 16 - 8
+    game_object.pos_y = scene.spawn[1] * 16 - 8
     @speed = 0.0
     @stopped_moving = true
     @colliders = [EntityCollider.new(10, 7, self)]
@@ -29,9 +28,9 @@ class HumanPhysics < EntityPhysics
       facing_x += distance
     end
 
-    if facing_x <= @map.width &&
+    if facing_x <= map.width &&
        facing_x.positive? &&
-       facing_y <= @map.height &&
+       facing_y <= map.height &&
        facing_y.positive?
       return facing_x, facing_y
     else
@@ -40,19 +39,19 @@ class HumanPhysics < EntityPhysics
   end
 
   def tile
-    @map.tile_at(x, y)
+    map.tile_at(x, y)
   end
 
   def tile_facing
     coord = coord_facing
-    @map.tile_at(coord[0], coord[1])
+    map.tile_at(coord[0], coord[1])
   end
 
   def tiles_facing(distance = 1)
     tiles = []
     distance.times do |i|
       coord = coord_facing(i + 1)
-      tiles << @map.tiles_at(coord[0], coord[1]) if coord
+      tiles << map.tiles_at(coord[0], coord[1]) if coord
     end
 
     tiles.flatten

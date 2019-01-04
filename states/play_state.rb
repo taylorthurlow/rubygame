@@ -2,11 +2,10 @@ require 'ruby-prof' if ENV['ENABLE_PROFILING']
 require 'memory_profiler' if ENV['PROFILE_MEMORY']
 
 class PlayState < GameState
-  attr_accessor :update_interval, :debugging
+  attr_accessor :update_interval, :debugging, :player, :scene, :camera
 
   def initialize
-    @scene = Scene.generate('meadow_scene')
-    # @scene = Scene.generate('cave_scene')
+    @scene = Scene.generate('meadow_scene', self)
     @camera = Camera.new
 
     # player
@@ -21,7 +20,7 @@ class PlayState < GameState
     @font = Gosu::Font.new(24, name: 'monospace', bold: true)
 
     $debugging = false
-    @debug = Debug.new(camera: @camera, player: @player, scene: @scene)
+    @debug = Debug.new(state: self, camera: @camera, player: @player)
   end
 
   def enter

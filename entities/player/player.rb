@@ -11,4 +11,10 @@ class Player < Human
     @sounds = EntitySounds.new(self)
     @direction = :south
   end
+
+  def transition_to_new_scene(new_scene)
+    @physics.scene = new_scene
+    @physics.set_position(new_scene.spawn[0], new_scene.spawn[1])
+    new_scene.object_pool.objects << self
+  end
 end

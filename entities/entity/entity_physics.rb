@@ -1,16 +1,23 @@
 class EntityPhysics < Component
-  attr_accessor :speed, :stopped_moving, :attempting_to_move
+  attr_accessor :scene, :speed, :stopped_moving, :attempting_to_move
 
   def initialize(game_object, scene)
     super(game_object)
 
-    @object_pool = scene.object_pool
-    @map = scene.map
+    @scene = scene
     game_object.pos_x = 30 * 16
     game_object.pos_y = 30 * 16
     @speed = 0.0
     @stopped_moving = true
     @colliders = []
+  end
+
+  def object_pool
+    @scene.object_pool
+  end
+
+  def map
+    @scene.map
   end
 
   def pos_x
@@ -19,6 +26,16 @@ class EntityPhysics < Component
 
   def pos_y
     object.pos_y
+  end
+
+  def set_position(x, y, pixel: false)
+    if pixel
+      object.pos_x = x
+      object.pos_y = y
+    else
+      object.pos_x = x * 16
+      object.pos_y = y * 16
+    end
   end
 
   def update
@@ -64,7 +81,7 @@ class EntityPhysics < Component
     #   return false if new_distance < old_distance
     # end
 
-    @map.surrounding_tiles(object.pos_x / 16, object.pos_y / 16).each do |t|
+    map.surrounding_tiles(object.pos_x / 16, object.pos_y / 16).each do |t|
       return false if t.colliders.any? do |c|
         @colliders.any? { |ec| Collider.collision?(c, ec) }
       end

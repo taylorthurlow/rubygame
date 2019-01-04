@@ -12,4 +12,8 @@ class ObjectPool
       obj != object && distance < max_distance
     end
   end
+
+  def player
+    @objects.find { |o| o.is_a? Player }
+  end
 end
