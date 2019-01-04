@@ -45,9 +45,14 @@ class Tile < Gosu::Image
   end
 
   def draw(draw_x, draw_y)
-    # determine z-index based on y coordinate
-    @sprite.draw(draw_x, draw_y, @colliders.empty? ? 0 : draw_y + 15) unless id.zero?
+    @sprite.draw(draw_x, draw_y, @colliders.empty? ? 0 : colliders_lowest_point) unless id.zero?
     @colliders.each(&:draw_bounding_box) if $debugging
+  end
+
+  # Returns the pixel value of the lowest vertex of all colliders on the tile. Used
+  # for determining which z-index to draw at.
+  def colliders_lowest_point
+    @colliders.map(&:lowest_point).max
   end
 
   def to_s

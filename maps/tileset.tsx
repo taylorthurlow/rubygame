@@ -185,29 +185,18 @@
    <property name="game_id" type="int" value="16"/>
    <property name="name" value="Edge 1"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0" y="0" width="3" height="16"/>
-   <object id="2" x="3" y="0" width="13" height="3"/>
-  </objectgroup>
  </tile>
  <tile id="25">
   <properties>
    <property name="game_id" type="int" value="17"/>
    <property name="name" value="Edge 2"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0" y="0" width="16" height="3"/>
-  </objectgroup>
  </tile>
  <tile id="26">
   <properties>
    <property name="game_id" type="int" value="18"/>
    <property name="name" value="Edge 3"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0" y="0" width="16" height="3"/>
-   <object id="2" x="13" y="3" width="3" height="13"/>
-  </objectgroup>
  </tile>
  <tile id="27">
   <properties>
@@ -239,9 +228,6 @@
    <property name="game_id" type="int" value="19"/>
    <property name="name" value="Edge 4"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0" y="0" width="3" height="16"/>
-  </objectgroup>
  </tile>
  <tile id="33">
   <properties>
@@ -253,9 +239,6 @@
    <property name="game_id" type="int" value="20"/>
    <property name="name" value="Edge 5"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="13" y="0" width="3" height="16"/>
-  </objectgroup>
  </tile>
  <tile id="35">
   <properties>
@@ -287,29 +270,18 @@
    <property name="game_id" type="int" value="21"/>
    <property name="name" value="Edge 6"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="4" x="0" y="13" width="16" height="3"/>
-   <object id="5" x="0" y="0" width="3" height="13"/>
-  </objectgroup>
  </tile>
  <tile id="41">
   <properties>
    <property name="game_id" type="int" value="22"/>
    <property name="name" value="Edge 7"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0" y="13" width="16" height="3"/>
-  </objectgroup>
  </tile>
  <tile id="42">
   <properties>
    <property name="game_id" type="int" value="23"/>
    <property name="name" value="Edge 8"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="13" y="0" width="3" height="16"/>
-   <object id="2" x="0" y="13" width="13" height="3"/>
-  </objectgroup>
  </tile>
  <tile id="43">
   <properties>

@@ -14,6 +14,10 @@ class Collider
     # override in subclass
   end
 
+  def lowest_point
+    box.each_slice(2).to_a.map { |s| s[1] }.max
+  end
+
   def draw_bounding_box
     # override in subclass
   end

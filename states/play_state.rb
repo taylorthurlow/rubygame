@@ -6,6 +6,7 @@ class PlayState < GameState
 
   def initialize
     @scene = Scene.generate('meadow_scene')
+    # @scene = Scene.generate('cave_scene')
     @camera = Camera.new
 
     # player
