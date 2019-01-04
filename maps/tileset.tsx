@@ -487,8 +487,12 @@
  </tile>
  <tile id="76">
   <properties>
-   <property name="game_id" type="int" value="-1"/>
+   <property name="game_id" type="int" value="33"/>
+   <property name="name" value="Tree"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="0" y="0" width="16" height="16"/>
+  </objectgroup>
  </tile>
  <tile id="77">
   <properties>

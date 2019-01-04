@@ -1,0 +1,2 @@
+class MeadowScene < Scene
+end

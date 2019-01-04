@@ -8,6 +8,9 @@ class Tile < Gosu::Image
     metadata = Tile.metadata(id, sprite_id)
 
     @scene = scene
+
+    raise 'Encountered an unknown tile in map.' unless metadata
+
     @id = metadata['id']
     @sprite_id = metadata['sprite_id']
     @sprite_path = metadata['sprite_path']

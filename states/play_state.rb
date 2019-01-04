@@ -5,7 +5,7 @@ class PlayState < GameState
   attr_accessor :update_interval, :debugging
 
   def initialize
-    @scene = Scene.generate('cave_scene')
+    @scene = Scene.generate('meadow_scene')
     @camera = Camera.new
 
     # player

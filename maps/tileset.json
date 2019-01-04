@@ -1376,11 +1376,38 @@
         }, 
         {
          "id":76,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "name":"",
+             "objects":[
+                    {
+                     "height":16,
+                     "id":1,
+                     "name":"",
+                     "rotation":0,
+                     "type":"",
+                     "visible":true,
+                     "width":16,
+                     "x":0,
+                     "y":0
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
          "properties":[
                 {
                  "name":"game_id",
                  "type":"int",
-                 "value":-1
+                 "value":33
+                }, 
+                {
+                 "name":"name",
+                 "type":"string",
+                 "value":"Tree"
                 }]
         }, 
         {
