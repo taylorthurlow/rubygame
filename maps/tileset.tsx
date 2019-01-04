@@ -357,13 +357,23 @@
  </tile>
  <tile id="56">
   <properties>
-   <property name="game_id" type="int" value="-1"/>
+   <property name="class" value="TileStairs"/>
+   <property name="game_id" type="int" value="35"/>
+   <property name="name" value="Stairs Up"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="2" x="2" y="0" width="14" height="16"/>
+  </objectgroup>
  </tile>
  <tile id="57">
   <properties>
-   <property name="game_id" type="int" value="-1"/>
+   <property name="class" value="TileStairs"/>
+   <property name="game_id" type="int" value="34"/>
+   <property name="name" value="Stairs Down"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="2" x="0" y="0" width="16" height="16"/>
+  </objectgroup>
  </tile>
  <tile id="58">
   <properties>

@@ -31,3 +31,5 @@
 31. Abyss
 32. Invisible Wall
 33. Tree
+34. Stairs Down
+35. Stairs Up

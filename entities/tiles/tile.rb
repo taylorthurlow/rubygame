@@ -105,6 +105,10 @@ class Tile < Gosu::Image
     @@tile_data.find { |_, d| d['sprite_id'] == sprite_id }&.fetch(1)
   end
 
+  def self.tile_data
+    @@tile_data
+  end
+
   def self.preset_class_vars
     @@tile_data ||= {}
     @@data_files_loaded ||= []

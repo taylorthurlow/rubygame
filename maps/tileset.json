@@ -966,20 +966,84 @@
         }, 
         {
          "id":56,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "name":"",
+             "objects":[
+                    {
+                     "height":16,
+                     "id":2,
+                     "name":"",
+                     "rotation":0,
+                     "type":"",
+                     "visible":true,
+                     "width":14,
+                     "x":2,
+                     "y":0
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
          "properties":[
+                {
+                 "name":"class",
+                 "type":"string",
+                 "value":"TileStairs"
+                }, 
                 {
                  "name":"game_id",
                  "type":"int",
-                 "value":-1
+                 "value":35
+                }, 
+                {
+                 "name":"name",
+                 "type":"string",
+                 "value":"Stairs Up"
                 }]
         }, 
         {
          "id":57,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "name":"",
+             "objects":[
+                    {
+                     "height":16,
+                     "id":2,
+                     "name":"",
+                     "rotation":0,
+                     "type":"",
+                     "visible":true,
+                     "width":16,
+                     "x":0,
+                     "y":0
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
          "properties":[
+                {
+                 "name":"class",
+                 "type":"string",
+                 "value":"TileStairs"
+                }, 
                 {
                  "name":"game_id",
                  "type":"int",
-                 "value":-1
+                 "value":34
+                }, 
+                {
+                 "name":"name",
+                 "type":"string",
+                 "value":"Stairs Down"
                 }]
         }, 
         {

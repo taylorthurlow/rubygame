@@ -2,7 +2,7 @@ require 'ruby-prof' if ENV['ENABLE_PROFILING']
 require 'memory_profiler' if ENV['PROFILE_MEMORY']
 
 class PlayState < GameState
-  attr_accessor :update_interval, :debugging, :player, :scene, :camera
+  attr_accessor :update_interval, :debugging, :player, :scene, :camera, :debug
 
   def initialize
     @scene = Scene.generate('meadow_scene', self)

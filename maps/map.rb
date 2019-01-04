@@ -16,25 +16,42 @@ class Map
   # Consume the data hash directly from Tiled and construct tile objects to
   # form the map, returning the a hash containing each layer
   def parse_map(data_hash)
-    data = {}
+    data = {
+      tile_layers: {},
+      object_layers: {}
+    }
+
     data_hash['layers'].each do |layer|
-      tile_ids = layer['data'].each_slice(@width)
-      data[layer['name'].to_sym] = tile_ids.each_with_index.map do |row, i|
-        row.each_with_index.map do |t, j|
-          if t.zero?
-            nil # essentially means no tile here, blank
-          else
-            tile = Tile.new(@scene, sprite_id: t - 1)
-            tile = Object.const_get(tile.logic_class).new(@scene, sprite_id: t - 1) if tile.logic_class
-            tile.x = j
-            tile.y = i
-            tile
-          end
-        end
+      case layer['type']
+      when 'tilelayer'
+        data[:tile_layers][layer['name'].to_sym] = process_tile_layer(layer)
+      when 'objectgroup'
+        data[:object_layers][layer['name'].to_sym] = process_object_layer(layer)
       end
     end
 
     data
+  end
+
+  def process_tile_layer(layer)
+    tile_ids = layer['data'].each_slice(@width)
+    tile_ids.each_with_index.map do |row, i|
+      row.each_with_index.map do |t, j|
+        if t.zero?
+          nil # essentially means no tile here, blank
+        else
+          tile = Tile.new(@scene, sprite_id: t - 1)
+          tile = Object.const_get(tile.logic_class).new(@scene, sprite_id: t - 1) if tile.logic_class
+          tile.x = j
+          tile.y = i
+          tile
+        end
+      end
+    end
+  end
+
+  def process_object_layer(object_layer)
+    object_layer
   end
 
   # Perform the draw of the map data onto the screen
@@ -50,7 +67,7 @@ class Map
 
     (x0..x1).each do |x|
       (y0..y1).each do |y|
-        @layers.each do |_, tiles|
+        @layers[:tile_layers].each do |_, tiles|
           next unless tiles[y][x]
 
           tiles[y][x].draw(x * @tile_size, y * @tile_size) if tiles[y][x].id != 0
@@ -65,7 +82,7 @@ class Map
   def set_tile_at(x, y, new_tile, layer: :ground)
     new_tile.x = x
     new_tile.y = y
-    @layers[layer][y][x] = new_tile
+    @layers[:tile_layers][layer][y][x] = new_tile
   end
 
   # Get the topmost tile at a given coordinate pair
@@ -75,7 +92,7 @@ class Map
 
   # Get a list of tiles at a given coordinate pair, in order of bottom to top
   def tiles_at(x, y)
-    @layers.map { |_, tiles| tiles[y][x] }.compact
+    @layers[:tile_layers].map { |_, tiles| tiles[y][x] }.compact
   end
 
   # Get a list of all tiles surrounding a tile at a given coordinate pair,
@@ -88,6 +105,17 @@ class Map
     ]
 
     diffs.map { |dx, dy| tiles_at(x + dx, y + dy) }.flatten
+  end
+
+  def teleports
+    @layers[:object_layers][:teleports]['objects'].map do |o|
+      teleport = {
+        x: o['x'],
+        y: o['y']
+      }
+      o['properties'].each { |p| teleport[p['name'].to_sym] = p['value'] }
+      teleport
+    end
   end
 
   private
