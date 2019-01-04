@@ -2,7 +2,7 @@ class EntityGraphics < Component
   def initialize(game_object)
     super(game_object)
 
-    @body = units('assets/mainguy.png')
+    @sprites = load_sprite('assets/mainguy.png')
     @current_frame = 0
   end
 
@@ -10,10 +10,14 @@ class EntityGraphics < Component
     advance_frame
   end
 
+  def physics
+    object.physics
+  end
+
   def draw(viewport)
-    if object.physics.moving? || object.physics.stopped_moving
-      select_frame.draw(pos_x - 8, pos_y - 12, pos_y)
-      object.physics.stopped_moving = false
+    if physics.moving? || physics.stopped_moving
+      select_frame.draw(physics.pos_x - 8, physics.pos_y - 12, physics.pos_y)
+      physics.stopped_moving = false
     end
 
     if $debugging
@@ -24,34 +28,34 @@ class EntityGraphics < Component
 
   private
 
-  def units(path)
-    @units = Gosu::Image.load_tiles(path, 16, 16, retro: true)
+  def load_sprite(path)
+    Gosu::Image.load_tiles(path, 16, 16, retro: true)
   end
 
   def draw_bounding_box
-    # override
+    physics.colliders.each(&:draw_bounding_box)
   end
 
   def draw_position
-    Utils.draw_box(pos_x - 1, pos_y - 1, 2, 2, 0xFF_FF0000)
-    Utils.draw_box(x * 16, y * 16, 16, 16, 0x45_000000)
+    Utils.draw_box(physics.pos_x - 1, physics.pos_y - 1, 2, 2, 0xFF_FF0000)
+    Utils.draw_box(physics.x * 16, physics.y * 16, 16, 16, 0x45_000000)
   end
 
   def animation
-    case object.direction
+    case physics.direction
     when :north
-      @units[9..11]
+      @sprites[9..11]
     when :west
-      @units[3..5]
+      @sprites[3..5]
     when :south
-      @units[0..2]
+      @sprites[0..2]
     when :east
-      @units[6..8]
+      @sprites[6..8]
     end
   end
 
   def select_frame
-    if object.physics.stopped_moving
+    if physics.stopped_moving
       animation[1]
     else
       animation[@current_frame % 3]

@@ -13,43 +13,47 @@ class PlayerInput < Component
     self.object = obj
   end
 
+  def physics
+    object.physics
+  end
+
   def update
     if any_button_down?(*@motion_buttons)
-      object.physics.attempting_to_move = true
+      physics.attempting_to_move = true
       @moving_up = Utils.button_down?(Gosu::KB_W)
       @moving_left = Utils.button_down?(Gosu::KB_A)
       @moving_down = Utils.button_down?(Gosu::KB_S)
       @moving_right = Utils.button_down?(Gosu::KB_D)
     else
-      object.physics.attempting_to_move = false
+      physics.attempting_to_move = false
     end
   end
 
   def button_down(id)
     case id
     when Gosu::KB_W
-      object.direction = :north
+      physics.direction = :north
     when Gosu::KB_A
-      object.direction = :west
+      physics.direction = :west
     when Gosu::KB_S
-      object.direction = :south
+      physics.direction = :south
     when Gosu::KB_D
-      object.direction = :east
+      physics.direction = :east
     when Gosu::KB_RETURN
       new_name = $window.state.scene.name == 'cave_scene' ? 'meadow_scene' : 'cave_scene'
       $window.state.scene.transition_to(new_name)
     when Gosu::KB_SPACE
-      interacted = object.physics.tile.interact
-      object.physics.tiles_facing.each(&:interact) unless interacted
+      interacted = physics.tile.interact
+      physics.tiles_facing.each(&:interact) unless interacted
     end
   end
 
   def button_up(id)
     if any_button_down?(*@motion_buttons)
-      object.direction = :north if Utils.button_down?(Gosu::KB_W)
-      object.direction = :west if Utils.button_down?(Gosu::KB_A)
-      object.direction = :south if Utils.button_down?(Gosu::KB_S)
-      object.direction = :east if Utils.button_down?(Gosu::KB_D)
+      physics.direction = :north if Utils.button_down?(Gosu::KB_W)
+      physics.direction = :west if Utils.button_down?(Gosu::KB_A)
+      physics.direction = :south if Utils.button_down?(Gosu::KB_S)
+      physics.direction = :east if Utils.button_down?(Gosu::KB_D)
     end
   end
 

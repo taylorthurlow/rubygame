@@ -1,5 +1,5 @@
 class Entity < GameObject
-  attr_accessor :pos_x, :pos_y, :direction, :physics, :sounds
+  attr_accessor :physics, :graphics, :sounds
 
   def initialize(scene)
     super(scene)
@@ -7,6 +7,25 @@ class Entity < GameObject
     @physics = EntityPhysics.new(self, scene)
     @graphics = EntityGraphics.new(self)
     @sounds = EntitySounds.new(self)
-    @direction = :south
+  end
+
+  def pos_x
+    @physics.pos_x
+  end
+
+  def pos_y
+    @physics.pos_y
+  end
+
+  def x
+    @physics.x
+  end
+
+  def y
+    @physics.y
+  end
+
+  def direction
+    @physics.direction
   end
 end

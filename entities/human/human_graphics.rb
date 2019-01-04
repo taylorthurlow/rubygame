@@ -7,21 +7,13 @@ class HumanGraphics < EntityGraphics
       'assets/girl.png'
     ]
 
-    @body = units(human_sprites.sample)
+    @sprites = load_sprite(human_sprites.sample)
     @current_frame = 0
   end
 
   def update
-    if rand(1..100) == 1
-      object.direction = [:north, :east, :south, :west].sample
-    end
+    physics.direction = [:north, :east, :south, :west].sample if rand(1..100) == 1
 
     advance_frame
-  end
-
-  private
-
-  def draw_bounding_box
-    object.physics.colliders.each(&:draw_bounding_box)
   end
 end

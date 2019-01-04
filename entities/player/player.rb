@@ -1,6 +1,4 @@
 class Player < Human
-  attr_accessor :pos_x, :pos_y, :direction, :physics, :sounds, :input
-
   def initialize(scene, input)
     GameObject.instance_method(:initialize).bind(self).call(scene)
 
@@ -9,7 +7,6 @@ class Player < Human
     @physics = HumanPhysics.new(self, scene)
     @graphics = PlayerGraphics.new(self)
     @sounds = EntitySounds.new(self)
-    @direction = :south
   end
 
   def transition_to_new_scene(new_scene)

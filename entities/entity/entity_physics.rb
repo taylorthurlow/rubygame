@@ -1,13 +1,15 @@
 class EntityPhysics < Component
-  attr_accessor :scene, :speed, :stopped_moving, :attempting_to_move
+  attr_accessor :scene, :speed, :stopped_moving, :attempting_to_move, :pos_x,
+                :pos_y, :colliders, :direction
 
   def initialize(game_object, scene)
     super(game_object)
 
     @scene = scene
-    game_object.pos_x = 30 * 16
-    game_object.pos_y = 30 * 16
+    @pos_x = 30 * 16
+    @pos_y = 30 * 16
     @speed = 0.0
+    @direction = :south
     @stopped_moving = true
     @colliders = []
   end
@@ -20,21 +22,69 @@ class EntityPhysics < Component
     @scene.map
   end
 
-  def pos_x
-    object.pos_x
+  def input
+    @object.input
   end
 
-  def pos_y
-    object.pos_y
+  def x
+    @pos_x / 16
+  end
+
+  def y
+    @pos_y / 16
+  end
+
+  def coord_facing(distance = 1)
+    facing_x = x
+    facing_y = y
+
+    case object.direction
+    when :north
+      facing_y -= distance
+    when :west
+      facing_x -= distance
+    when :south
+      facing_y += distance
+    when :east
+      facing_x += distance
+    end
+
+    if facing_x <= map.width &&
+       facing_x.positive? &&
+       facing_y <= map.height &&
+       facing_y.positive?
+      return facing_x, facing_y
+    else
+      return nil
+    end
+  end
+
+  def tile
+    map.tile_at(x, y)
+  end
+
+  def tile_facing
+    coord = coord_facing
+    map.tile_at(coord[0], coord[1])
+  end
+
+  def tiles_facing(distance = 1)
+    tiles = []
+    distance.times do |i|
+      coord = coord_facing(i + 1)
+      tiles << map.tiles_at(coord[0], coord[1]) if coord
+    end
+
+    tiles.flatten
   end
 
   def set_position(x, y, pixel: false)
     if pixel
-      object.pos_x = x
-      object.pos_y = y
+      @pos_x = x
+      @pos_y = y
     else
-      object.pos_x = x * 16
-      object.pos_y = y * 16
+      @pos_x = x * 16
+      @pos_y = y * 16
     end
   end
 
@@ -42,21 +92,21 @@ class EntityPhysics < Component
     attempting_to_move ? accelerate : decelerate
 
     if @speed.positive?
-      new_pos_x = pos_x
-      new_pos_y = pos_y
+      new_pos_x = @pos_x
+      new_pos_y = @pos_y
       shift = Utils.adjust_speed(@speed).round
-      new_pos_y -= shift if object.input.moving_up
-      new_pos_x -= shift if object.input.moving_left
-      new_pos_y += shift if object.input.moving_down
-      new_pos_x += shift if object.input.moving_right
+      new_pos_y -= shift if input.moving_up
+      new_pos_x -= shift if input.moving_left
+      new_pos_y += shift if input.moving_down
+      new_pos_x += shift if input.moving_right
 
       if can_move_to?(new_pos_x, new_pos_y)
-        object.pos_x = new_pos_x
-        object.pos_y = new_pos_y
+        @pos_x = new_pos_x
+        @pos_y = new_pos_y
       elsif can_move_to?(new_pos_x, pos_y)
-        object.pos_x = new_pos_x
+        @pos_x = new_pos_x
       elsif can_move_to?(pos_x, new_pos_y)
-        object.pos_y = new_pos_y
+        @pos_y = new_pos_y
       else
         # make a sound possibly
         @speed = 0.0
@@ -65,10 +115,10 @@ class EntityPhysics < Component
   end
 
   def can_move_to?(pos_x, pos_y)
-    old_pos_x = object.pos_x
-    old_pos_y = object.pos_y
-    object.pos_x = pos_x
-    object.pos_y = pos_y
+    old_pos_x = @pos_x
+    old_pos_y = @pos_y
+    @pos_x = pos_x
+    @pos_y = pos_y
 
     # @object_pool.nearby(object, 100).each do |obj|
     #   next unless collides_with_poly?(obj.physics.box)
@@ -81,7 +131,7 @@ class EntityPhysics < Component
     #   return false if new_distance < old_distance
     # end
 
-    map.surrounding_tiles(object.pos_x / 16, object.pos_y / 16).each do |t|
+    map.surrounding_tiles(@pos_x / 16, @pos_y / 16).each do |t|
       return false if t.colliders.any? do |c|
         @colliders.any? { |ec| Collider.collision?(c, ec) }
       end
@@ -89,8 +139,8 @@ class EntityPhysics < Component
 
     true
   ensure
-    object.pos_x = old_pos_x
-    object.pos_y = old_pos_y
+    @pos_x = old_pos_x
+    @pos_y = old_pos_y
   end
 
   def moving?
@@ -101,22 +151,6 @@ class EntityPhysics < Component
       @stopped_moving ||= true
       false
     end
-  end
-
-  def tile_above
-    [x, y - 1]
-  end
-
-  def tile_left
-    [x - 1, y]
-  end
-
-  def tile_below
-    [x, y + 1]
-  end
-
-  def tile_right
-    [x + 1, y]
   end
 
   private
