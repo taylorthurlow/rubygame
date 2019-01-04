@@ -5,12 +5,12 @@ class PlayState < GameState
   attr_accessor :update_interval, :debugging
 
   def initialize
-    @map = WorldMap.new('maps/cave.json', 'maps/tileset.json')
+    @scene = Scene.generate('cave_scene')
     @camera = Camera.new
-    @object_pool = ObjectPool.new(@map)
+    @map = @scene.map
 
     # player
-    @player = Player.new(@object_pool, PlayerInput.new(@camera))
+    @player = Player.new(@scene, PlayerInput.new(@camera))
     @map.entities << @player
     @camera.target = @player
 
@@ -22,7 +22,7 @@ class PlayState < GameState
     @font = Gosu::Font.new(24, name: 'monospace', bold: true)
 
     $debugging = false
-    @debug = Debug.new(camera: @camera, player: @player, world: @world)
+    @debug = Debug.new(camera: @camera, player: @player, scene: @scene)
   end
 
   def enter
@@ -36,16 +36,14 @@ class PlayState < GameState
   end
 
   def update
-    @object_pool.objects.map(&:update)
-    @object_pool.objects.reject!(&:removable?)
+    @scene.update
     @camera.update
     @debug.update if $debugging
   end
 
   def draw
     Utils.draw_scaled(@camera) do |viewport|
-      @map.draw(viewport)
-      @object_pool.objects.map { |o| o.draw(viewport) }
+      @scene.draw(viewport)
     end
 
     @debug.draw if $debugging

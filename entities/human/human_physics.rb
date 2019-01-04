@@ -2,11 +2,11 @@ class HumanPhysics < EntityPhysics
   attr_accessor :speed, :stopped_moving, :attempting_to_move, :colliders,
                 :width, :height
 
-  def initialize(game_object, object_pool)
+  def initialize(game_object, scene)
     Component.instance_method(:initialize).bind(self).call(game_object)
 
-    @object_pool = object_pool
-    @map = object_pool.map
+    @object_pool = scene.object_pool
+    @map = scene.map
     game_object.pos_x = 12 * 16
     game_object.pos_y = 15 * 16
     @speed = 0.0

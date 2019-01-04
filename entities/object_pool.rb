@@ -12,5 +12,4 @@ class ObjectPool
       obj != object && distance < max_distance
     end
   end
-
 end

@@ -1,4 +1,4 @@
-class WorldMap
+class Map
   attr_accessor :data_hash, :map_path, :tileset_path, :layers, :width, :height, :entities
 
   def initialize(map_path, tileset_path)

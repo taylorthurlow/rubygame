@@ -71,4 +71,15 @@ module Utils
     end
   end
 
+  # From https://stackoverflow.com/a/48282195/1177200
+  def self.snake_to_pascal_case(str, mode: :class)
+    case mode
+    when :class
+      str.split('_').map(&:capitalize).join
+    when :method
+      str.split('_').inject { |m, p| m + p.capitalize }
+    else
+      raise "unknown mode #{mode.inspect}"
+    end
+  end
 end

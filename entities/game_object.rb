@@ -1,9 +1,10 @@
 class GameObject
-  attr_accessor :components, :object_pool
+  attr_accessor :components, :scene, :object_pool
 
-  def initialize(object_pool)
+  def initialize(scene)
     @components = []
-    @object_pool = object_pool
+    @scene = scene
+    @object_pool = scene.object_pool
     @object_pool.objects << self
   end
 

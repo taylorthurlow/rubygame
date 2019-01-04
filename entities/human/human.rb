@@ -1,12 +1,12 @@
 class Human < Entity
   attr_accessor :pos_x, :pos_y, :direction, :physics, :sounds, :input
 
-  def initialize(object_pool, input)
-    GameObject.instance_method(:initialize).bind(self).call(object_pool)
+  def initialize(scene, input)
+    GameObject.instance_method(:initialize).bind(self).call(scene.object_pool)
 
     @input = input
     @input.control(self)
-    @physics = HumanPhysics.new(self, object_pool)
+    @physics = HumanPhysics.new(self, scene.object_pool)
     @graphics = HumanGraphics.new(self)
     @sounds = EntitySounds.new(self)
     @direction = :south

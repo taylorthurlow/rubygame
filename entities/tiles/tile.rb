@@ -1,18 +1,18 @@
 class Tile < Gosu::Image
   attr_accessor :id, :logic_class, :sprite_id, :sprite, :name, :x, :y, :colliders
 
-  def initialize(world, id: nil, sprite_id: nil)
+  def initialize(map, id: nil, sprite_id: nil)
     # instantiate all class level variables if necessary
     Tile.preset_class_vars
 
     # load tile data from map JSON, will skip if path already loaded
-    Tile.load_tile_data(world.tileset_path)
+    Tile.load_tile_data(map.tileset_path)
 
     # load metadata from previously loaded tile data given either an id or a
     # sprite id (only one of the two is necessary)
     metadata = Tile.metadata(id, sprite_id)
 
-    @world = world
+    @map = map
     @id = metadata['id']
     @sprite_id = metadata['sprite_id']
     @sprite_path = metadata['sprite_path']

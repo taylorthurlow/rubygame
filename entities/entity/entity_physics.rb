@@ -1,11 +1,11 @@
 class EntityPhysics < Component
   attr_accessor :speed, :stopped_moving, :attempting_to_move
 
-  def initialize(game_object, object_pool)
+  def initialize(game_object, scene)
     super(game_object)
 
-    @object_pool = object_pool
-    @map = object_pool.map
+    @object_pool = scene.object_pool
+    @map = scene.map
     game_object.pos_x = 30 * 16
     game_object.pos_y = 30 * 16
     @speed = 0.0

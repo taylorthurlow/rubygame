@@ -1,0 +1,2 @@
+class CaveScene < Scene
+end

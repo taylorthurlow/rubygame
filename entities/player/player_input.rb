@@ -53,9 +53,7 @@ class PlayerInput < Component
   private
 
   def any_button_down?(*buttons)
-    buttons.each do |b|
-      return true if Utils.button_down?(b)
-    end
+    buttons.each { |b| return true if Utils.button_down?(b) }
 
     false
   end
