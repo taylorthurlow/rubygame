@@ -3,7 +3,7 @@ class Scene
 
   def initialize(name)
     @name = name
-    @map = Map.new("maps/#{name_without_suffix}.json", 'maps/tileset.json')
+    @map = Map.new(self, "maps/#{name_without_suffix}.json", 'maps/tileset.json')
     @object_pool = ObjectPool.new(@map)
   end
 

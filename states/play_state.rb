@@ -7,11 +7,9 @@ class PlayState < GameState
   def initialize
     @scene = Scene.generate('cave_scene')
     @camera = Camera.new
-    @map = @scene.map
 
     # player
     @player = Player.new(@scene, PlayerInput.new(@camera))
-    @map.entities << @player
     @camera.target = @player
 
     # npcs

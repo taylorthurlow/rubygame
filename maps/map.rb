@@ -1,15 +1,16 @@
 class Map
-  attr_accessor :data_hash, :map_path, :tileset_path, :layers, :width, :height, :entities
+  attr_accessor :data_hash, :map_path, :tileset_path, :layers, :width, :height
 
-  def initialize(map_path, tileset_path)
+  def initialize(scene, map_path, tileset_path)
+    @scene = scene
     @data_hash = load_map(map_path)
     @map_path = map_path
     @tileset_path = tileset_path
+    Tile.load_tile_data(tileset_path)
     @tile_size = data_hash['tilewidth']
     @width = data_hash['width']
     @height = data_hash['height']
     @layers = parse_map(data_hash)
-    @entities = []
   end
 
   # Consume the data hash directly from Tiled and construct tile objects to
@@ -23,8 +24,8 @@ class Map
           if t.zero?
             nil # essentially means no tile here, blank
           else
-            tile = Tile.new(self, sprite_id: t - 1)
-            tile = Object.const_get(tile.logic_class).new(self, sprite_id: t - 1) if tile.logic_class
+            tile = Tile.new(@scene, sprite_id: t - 1)
+            tile = Object.const_get(tile.logic_class).new(@scene, sprite_id: t - 1) if tile.logic_class
             tile.x = j
             tile.y = i
             tile
