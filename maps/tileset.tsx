@@ -19,7 +19,7 @@
    <property name="name" value="Gray Brick 2"/>
   </properties>
   <objectgroup draworder="index">
-   <object id="1" x="0" y="7" width="16" height="9"/>
+   <object id="1" x="0" y="0" width="16" height="16"/>
   </objectgroup>
  </tile>
  <tile id="2">
@@ -28,7 +28,7 @@
    <property name="name" value="Gray Brick 3"/>
   </properties>
   <objectgroup draworder="index">
-   <object id="1" x="0" y="7" width="16" height="9"/>
+   <object id="2" x="0" y="0" width="16" height="16"/>
   </objectgroup>
  </tile>
  <tile id="3">
@@ -99,7 +99,7 @@
    <property name="name" value="Short Grass"/>
   </properties>
  </tile>
- <tile id="12">
+ <tile id="12" probability="0.1">
   <properties>
    <property name="game_id" type="int" value="5"/>
    <property name="name" value="Flower Grass"/>
@@ -405,13 +405,13 @@
    <property name="game_id" type="int" value="-1"/>
   </properties>
  </tile>
- <tile id="64">
+ <tile id="64" probability="0.75">
   <properties>
    <property name="game_id" type="int" value="3"/>
    <property name="name" value="Medium Grass"/>
   </properties>
  </tile>
- <tile id="65">
+ <tile id="65" probability="0.35">
   <properties>
    <property name="game_id" type="int" value="4"/>
    <property name="name" value="Tall Grass"/>
@@ -561,7 +561,7 @@
    <property name="game_id" type="int" value="-1"/>
   </properties>
  </tile>
- <tile id="94">
+ <tile id="94" terrain=",,0,0">
   <properties>
    <property name="game_id" type="int" value="-1"/>
   </properties>
@@ -606,7 +606,7 @@
    <property name="game_id" type="int" value="-1"/>
   </properties>
  </tile>
- <tile id="103">
+ <tile id="103" terrain="0,,0,">
   <properties>
    <property name="game_id" type="int" value="-1"/>
   </properties>
@@ -641,7 +641,7 @@
    <property name="game_id" type="int" value="-1"/>
   </properties>
  </tile>
- <tile id="110">
+ <tile id="110" terrain="0,0,,">
   <properties>
    <property name="game_id" type="int" value="-1"/>
   </properties>
@@ -688,7 +688,7 @@
  </tile>
  <tile id="119">
   <properties>
-   <property name="game_id" type="int" value="8"/>
+   <property name="game_id" type="int" value="32"/>
    <property name="name" value="Invisible Wall"/>
   </properties>
   <objectgroup draworder="index">

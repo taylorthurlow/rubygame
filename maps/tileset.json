@@ -58,7 +58,7 @@
              "name":"",
              "objects":[
                     {
-                     "height":9,
+                     "height":16,
                      "id":1,
                      "name":"",
                      "rotation":0,
@@ -66,7 +66,7 @@
                      "visible":true,
                      "width":16,
                      "x":0,
-                     "y":7
+                     "y":0
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -94,15 +94,15 @@
              "name":"",
              "objects":[
                     {
-                     "height":9,
-                     "id":1,
+                     "height":16,
+                     "id":2,
                      "name":"",
                      "rotation":0,
                      "type":"",
                      "visible":true,
                      "width":16,
                      "x":0,
-                     "y":7
+                     "y":0
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -355,6 +355,7 @@
         }, 
         {
          "id":12,
+         "probability":0.100000001490116,
          "properties":[
                 {
                  "name":"game_id",
@@ -1102,6 +1103,7 @@
         }, 
         {
          "id":64,
+         "probability":0.75,
          "properties":[
                 {
                  "name":"game_id",
@@ -1116,6 +1118,7 @@
         }, 
         {
          "id":65,
+         "probability":0.349999994039536,
          "properties":[
                 {
                  "name":"game_id",
@@ -1415,7 +1418,8 @@
                  "name":"game_id",
                  "type":"int",
                  "value":-1
-                }]
+                }],
+         "terrain":[-1, -1, 0, 0]
         }, 
         {
          "id":95,
@@ -1498,7 +1502,8 @@
                  "name":"game_id",
                  "type":"int",
                  "value":-1
-                }]
+                }],
+         "terrain":[0, -1, 0, -1]
         }, 
         {
          "id":104,
@@ -1562,7 +1567,8 @@
                  "name":"game_id",
                  "type":"int",
                  "value":-1
-                }]
+                }],
+         "terrain":[0, 0, -1, -1]
         }, 
         {
          "id":111,
@@ -1676,7 +1682,7 @@
                 {
                  "name":"game_id",
                  "type":"int",
-                 "value":8
+                 "value":32
                 }, 
                 {
                  "name":"name",

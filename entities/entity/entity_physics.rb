@@ -111,8 +111,15 @@ class EntityPhysics < Component
         # make a sound possibly
         @speed = 0.0
       end
+
+      if tile != tile_at(x, y)
+        # entering new tiles
+        # STARTHERE
+      end
     end
   end
+
+  def
 
   def can_move_to?(pos_x, pos_y)
     old_pos_x = @pos_x

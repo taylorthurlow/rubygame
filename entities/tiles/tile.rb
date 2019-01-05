@@ -9,7 +9,7 @@ class Tile < Gosu::Image
 
     @scene = scene
 
-    raise 'Encountered an unknown tile in map.' unless metadata
+    raise "Encountered an unknown tile in map: #{id || sprite_id}" unless metadata
 
     @id = metadata['id']
     @sprite_id = metadata['sprite_id']

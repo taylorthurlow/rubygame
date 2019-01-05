@@ -53,7 +53,6 @@ class PlayState < GameState
       end
     end
 
-    # binding.pry
     @last_draw.draw(0, 0, 9999, 1, 1)
 
     @debug.draw if $debugging
