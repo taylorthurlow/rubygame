@@ -14,7 +14,7 @@ class GameWindow < Gosu::Window
 
   def update
     Utils.track_update_interval
-    @state.update
+    @state.update if @state.needs_update?
   end
 
   def button_down(id)
@@ -30,7 +30,7 @@ class GameWindow < Gosu::Window
   end
 
   def draw
-    @state.draw
+    @state.draw if @state.needs_redraw?
   end
 
   def memory_usage

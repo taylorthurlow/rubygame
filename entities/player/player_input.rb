@@ -19,6 +19,8 @@ class PlayerInput < Component
 
   def update
     if any_button_down?(*@motion_buttons)
+      return if $window.state.fading
+
       physics.attempting_to_move = true
       @moving_up = Utils.button_down?(Gosu::KB_W)
       @moving_left = Utils.button_down?(Gosu::KB_A)

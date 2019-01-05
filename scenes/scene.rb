@@ -37,6 +37,7 @@ class Scene
     prepare_transition_to(new_scene)
     $window.state.scene = new_scene
     camera.target = player
+    @state.fade_out
   end
 
   def spawn

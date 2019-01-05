@@ -5,8 +5,10 @@ class PlayState < GameState
   attr_accessor :update_interval, :debugging, :player, :scene, :camera, :debug
 
   def initialize
+    super
     @scene = Scene.generate('meadow_scene', self)
     @camera = Camera.new
+    @last_draw = nil
 
     # player
     @player = Player.new(@scene, PlayerInput.new(@camera))
@@ -40,9 +42,19 @@ class PlayState < GameState
   end
 
   def draw
-    Utils.draw_scaled(@camera) do |viewport|
-      @scene.draw(viewport)
+    if fading
+      super
+      @last_draw.draw(0, 0, 9999, 1, 1)
+    else
+      @last_draw = Gosu.record($window.width, $window.height) do
+        Utils.draw_scaled(@camera) do |viewport|
+          @scene.draw(viewport)
+        end
+      end
     end
+
+    # binding.pry
+    @last_draw.draw(0, 0, 9999, 1, 1)
 
     @debug.draw if $debugging
   end
