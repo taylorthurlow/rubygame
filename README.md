@@ -5,7 +5,7 @@ There are a bunch of dependencies which I should list here, but haven't gotten a
 Here's what it looks like right now:
 
 <p align="center">
-  <a href="https://i.imgur.com/2byEkks.gifv">
+  <a href="https://i.imgur.com/r8gXNuS.mp4">
     <img src="https://user-images.githubusercontent.com/761640/50717860-6aa9ae80-103f-11e9-921a-809d23c1d2c8.gif">
   </a>
 </p>
