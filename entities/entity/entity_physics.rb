@@ -112,14 +112,11 @@ class EntityPhysics < Component
         @speed = 0.0
       end
 
-      if tile != tile_at(x, y)
-        # entering new tiles
-        # STARTHERE
+      if tile != map.tile_at(x, y)
+        # entering a new tile
       end
     end
   end
-
-  def
 
   def can_move_to?(pos_x, pos_y)
     old_pos_x = @pos_x

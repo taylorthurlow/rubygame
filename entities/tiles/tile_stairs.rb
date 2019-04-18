@@ -29,6 +29,12 @@ class TileStairs < Tile
   end
 
   def debug_text
-    find_teleport[:target_scene_name]
+    teleport = find_teleport
+
+    if teleport
+      teleport[:target_scene_name]
+    elsif $debugging
+      puts "Tried finding a teleport for tile #{self}, but found nothing."
+    end
   end
 end
