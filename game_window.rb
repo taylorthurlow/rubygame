@@ -1,12 +1,13 @@
 class GameWindow < Gosu::Window
   attr_accessor :state
 
-  WINDOW_WIDTH = 800
-  WINDOW_HEIGHT = 600
+  WINDOW_WIDTH = 1920
+  WINDOW_HEIGHT = 1080
 
   def initialize
     super(WINDOW_WIDTH, WINDOW_HEIGHT)
     self.caption = 'some stupid ruby game'
+    self.fullscreen = true
 
     @memory_usage = nil
     @memory_last_updated = Gosu.milliseconds
