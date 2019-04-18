@@ -92,13 +92,24 @@ class EntityPhysics < Component
     attempting_to_move ? accelerate : decelerate
 
     if @speed.positive?
-      new_pos_x = @pos_x
-      new_pos_y = @pos_y
       shift = Utils.adjust_speed(@speed).round
-      new_pos_y -= shift if input.moving_up
-      new_pos_x -= shift if input.moving_left
-      new_pos_y += shift if input.moving_down
-      new_pos_x += shift if input.moving_right
+
+      dx = 0
+      dy = 0
+      dy -= shift if input.moving_up
+      dx -= shift if input.moving_left
+      dy += shift if input.moving_down
+      dx += shift if input.moving_right
+
+      magnitude = Math.sqrt(dx ** 2 + dy ** 2)
+
+      if magnitude.positive?
+        new_pos_x = @pos_x + (dx / magnitude)
+        new_pos_y = @pos_y + (dy / magnitude)
+      else
+        new_pos_x = @pos_x + dx
+        new_pos_y = @pos_y + dy
+      end
 
       if can_move_to?(new_pos_x, new_pos_y)
         @pos_x = new_pos_x
@@ -123,17 +134,6 @@ class EntityPhysics < Component
     old_pos_y = @pos_y
     @pos_x = pos_x
     @pos_y = pos_y
-
-    # @object_pool.nearby(object, 100).each do |obj|
-    #   next unless collides_with_poly?(obj.physics.box)
-
-    #   # helps get unstuck by only blocking movement towards the colliding
-    #   # object. walking away from it should be unrestricted. potentially some
-    #   # room for exploitation here, though
-    #   old_distance = Utils.distance_between(obj.pos_x, obj.pos_y, old_pos_x, old_pos_y)
-    #   new_distance = Utils.distance_between(obj.pos_x, obj.pos_y, pos_x, pos_y)
-    #   return false if new_distance < old_distance
-    # end
 
     map.surrounding_tiles(@pos_x / 16, @pos_y / 16).each do |t|
       return false if t.colliders.any? do |c|
