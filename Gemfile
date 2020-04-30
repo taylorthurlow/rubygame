@@ -6,4 +6,6 @@ group :development do
   gem 'memory_profiler'
   gem 'pry-byebug'
   gem 'ruby-prof'
+  gem 'rufo'
+  gem 'solargraph'
 end
