@@ -2,7 +2,7 @@ class EntityGraphics < Component
   def initialize(game_object)
     super(game_object)
 
-    @sprites = load_sprite('assets/mainguy.png')
+    @sprites = load_sprite("assets/mainguy.png")
     @current_frame = 0
   end
 
@@ -14,7 +14,7 @@ class EntityGraphics < Component
     object.physics
   end
 
-  def draw(viewport)
+  def draw(_viewport)
     if physics.moving? || physics.stopped_moving
       select_frame.draw(physics.pos_x - 8, physics.pos_y - 12, physics.pos_y)
       physics.stopped_moving = false

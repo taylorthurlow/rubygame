@@ -42,7 +42,7 @@ class PlayerInput < Component
     when Gosu::KB_D
       physics.direction = :east
     when Gosu::KB_RETURN
-      new_name = $window.state.scene.name == 'cave_scene' ? 'meadow_scene' : 'cave_scene'
+      new_name = $window.state.scene.name == "cave_scene" ? "meadow_scene" : "cave_scene"
       $window.state.scene.transition_to(new_name)
     when Gosu::KB_SPACE
       interacted = physics.tile.interact
@@ -50,7 +50,7 @@ class PlayerInput < Component
     end
   end
 
-  def button_up(id)
+  def button_up(_id)
     if any_button_down?(*@motion_buttons)
       physics.direction = :north if Utils.button_down?(Gosu::KB_W)
       physics.direction = :west if Utils.button_down?(Gosu::KB_A)

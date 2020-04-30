@@ -31,7 +31,7 @@ class GameState
                         $window.width,
                         $window.height,
                         Gosu::Color.argb(@fade, 0, 0, 0),
-                        10000)
+                        10_000)
     end
 
     if @fade >= 255

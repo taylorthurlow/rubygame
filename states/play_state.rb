@@ -1,12 +1,12 @@
-require 'ruby-prof' if ENV['ENABLE_PROFILING']
-require 'memory_profiler' if ENV['PROFILE_MEMORY']
+require "ruby-prof" if ENV["ENABLE_PROFILING"]
+require "memory_profiler" if ENV["PROFILE_MEMORY"]
 
 class PlayState < GameState
   attr_accessor :update_interval, :debugging, :player, :scene, :camera, :debug
 
   def initialize
     super
-    @scene = Scene.generate('meadow_scene', self)
+    @scene = Scene.generate("meadow_scene", self)
     @camera = Camera.new
     @last_draw = nil
 
@@ -19,20 +19,20 @@ class PlayState < GameState
     #   Human.new(@object_pool, AiInput.new)
     # end
 
-    @font = Gosu::Font.new(24, name: 'monospace', bold: true)
+    @font = Gosu::Font.new(24, name: "monospace", bold: true)
 
     $debugging = false
     @debug = Debug.new(state: self, camera: @camera, player: @player)
   end
 
   def enter
-    RubyProf.start if ENV['ENABLE_PROFILING']
-    MemoryProfiler.start if ENV['PROFILE_MEMORY']
+    RubyProf.start if ENV["ENABLE_PROFILING"]
+    MemoryProfiler.start if ENV["PROFILE_MEMORY"]
   end
 
   def leave
-    RubyProf::FlatPrinter.new(RubyProf.stop).print(STDOUT) if ENV['ENABLE_PROFILING']
-    MemoryProfiler.stop.pretty_print(color_output: true, scale_bytes: true) if ENV['PROFILE_MEMORY']
+    RubyProf::FlatPrinter.new(RubyProf.stop).print(STDOUT) if ENV["ENABLE_PROFILING"]
+    MemoryProfiler.stop.pretty_print(color_output: true, scale_bytes: true) if ENV["PROFILE_MEMORY"]
   end
 
   def update

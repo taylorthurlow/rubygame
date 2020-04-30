@@ -1,11 +1,11 @@
-require 'singleton'
+require "singleton"
 
 class MenuState < GameState
   include Singleton
   attr_accessor :play_state
 
   def initialize
-    @message = Gosu::Image.from_text('some stupid ruby game', 40)
+    @message = Gosu::Image.from_text("some stupid ruby game", 40)
   end
 
   def enter
@@ -17,7 +17,7 @@ class MenuState < GameState
   end
 
   def update
-    continue_text = @play_state ? 'c = continue, ' : ''
+    continue_text = @play_state ? "c = continue, " : ""
     @info = Gosu::Image.from_text("q = quit, #{continue_text}n = new Game", 30)
   end
 

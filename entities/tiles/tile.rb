@@ -11,18 +11,18 @@ class Tile < Gosu::Image
 
     raise "Encountered an unknown tile in map: #{id || sprite_id}" unless metadata
 
-    @id = metadata['id']
-    @sprite_id = metadata['sprite_id']
-    @sprite_path = metadata['sprite_path']
-    @name = metadata['name']
-    @colliders = metadata['colliders'].map(&:clone)
+    @id = metadata["id"]
+    @sprite_id = metadata["sprite_id"]
+    @sprite_path = metadata["sprite_path"]
+    @name = metadata["name"]
+    @colliders = metadata["colliders"].map(&:clone)
     @colliders.each { |c| c.tile = self }
-    @logic_class = metadata['class']
+    @logic_class = metadata["class"]
     @sprite = Tile.load_sprite(@sprite_path, @sprite_id)
   end
 
   def self.metadata(id, sprite_id)
-    raise 'No ID supplied for metadata lookup.' if id.nil? && sprite_id.nil?
+    raise "No ID supplied for metadata lookup." if id.nil? && sprite_id.nil?
 
     if id
       @@tile_data[id]
@@ -67,27 +67,27 @@ class Tile < Gosu::Image
 
     @@data_files_loaded << tileset_path
     parsed = JSON.parse(File.read(tileset_path))
-    parsed['tiles'].each do |tile|
-      properties = tile['properties'].to_h { |p| [p['name'], p['value']] }
-      colliders = if tile['objectgroup']
-                    tile['objectgroup']['objects'].map { |c| TileCollider.new_from_json(c) }
-                  else
-                    []
-                  end
+    parsed["tiles"].each do |tile|
+      properties = tile["properties"].to_h { |p| [p["name"], p["value"]] }
+      colliders = if tile["objectgroup"]
+          tile["objectgroup"]["objects"].map { |c| TileCollider.new_from_json(c) }
+        else
+          []
+        end
 
-      @@tile_data[properties['game_id']] = {
-        'id' => properties['game_id'],
-        'name' => properties['name'],
-        'sprite_id' => tile['id'],
-        'sprite_path' => parsed['image'].gsub('../', ''),
-        'colliders' => colliders,
-        'class' => properties['class']
+      @@tile_data[properties["game_id"]] = {
+        "id" => properties["game_id"],
+        "name" => properties["name"],
+        "sprite_id" => tile["id"],
+        "sprite_path" => parsed["image"].gsub("../", ""),
+        "colliders" => colliders,
+        "class" => properties["class"],
       }
     end
   end
 
   def self.load_sprite(path, sprite_id)
-    path ||= 'assets/basictiles.png'
+    path ||= "assets/basictiles.png"
 
     unless @@tile_sprites.key? path
       @@tile_sprites[path] = Gosu::Image.load_tiles(path, 16, 16, retro: true)
@@ -98,11 +98,11 @@ class Tile < Gosu::Image
 
   # Get a hash with id keys and sprite_id values
   def self.tile_ids
-    @@tile_data.map { |id, data| [id, Array(data['sprite'])] }.to_h
+    @@tile_data.map { |id, data| [id, Array(data["sprite"])] }.to_h
   end
 
   def self.find_tile_by_sprite_id(sprite_id)
-    @@tile_data.find { |_, d| d['sprite_id'] == sprite_id }&.fetch(1)
+    @@tile_data.find { |_, d| d["sprite_id"] == sprite_id }&.fetch(1)
   end
 
   def self.tile_data

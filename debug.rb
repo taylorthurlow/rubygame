@@ -16,7 +16,7 @@ class Debug
   end
 
   def draw_select_highlight
-    Utils.draw_scaled(@camera) do |viewport|
+    Utils.draw_scaled(@camera) do |_viewport|
       Gosu.draw_rect(@tiles_facing.first.pos_x,
                      @tiles_facing.first.pos_y,
                      16,

@@ -1,11 +1,11 @@
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
-gem 'gosu'
+gem "gosu"
 
 group :development do
-  gem 'memory_profiler'
-  gem 'pry-byebug'
-  gem 'ruby-prof'
-  gem 'rufo'
-  gem 'solargraph'
+  gem "memory_profiler"
+  gem "pry-byebug"
+  gem "ruby-prof"
+  gem "rufo"
+  gem "solargraph"
 end

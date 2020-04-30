@@ -17,8 +17,8 @@ class Camera
   end
 
   def viewport
-    x0 = @pos_x - ($window.width / 2)  / @zoom
-    x1 = @pos_x + ($window.width / 2)  / @zoom
+    x0 = @pos_x - ($window.width / 2) / @zoom
+    x1 = @pos_x + ($window.width / 2) / @zoom
     y0 = @pos_y - ($window.height / 2) / @zoom
     y1 = @pos_y + ($window.height / 2) / @zoom
 

@@ -7,9 +7,9 @@ class Map
     @map_path = map_path
     @tileset_path = tileset_path
     Tile.load_tile_data(tileset_path)
-    @tile_size = data_hash['tilewidth']
-    @width = data_hash['width']
-    @height = data_hash['height']
+    @tile_size = data_hash["tilewidth"]
+    @width = data_hash["width"]
+    @height = data_hash["height"]
     @layers = parse_map(data_hash)
   end
 
@@ -18,15 +18,15 @@ class Map
   def parse_map(data_hash)
     data = {
       tile_layers: {},
-      object_layers: {}
+      object_layers: {},
     }
 
-    data_hash['layers'].each do |layer|
-      case layer['type']
-      when 'tilelayer'
-        data[:tile_layers][layer['name'].to_sym] = process_tile_layer(layer)
-      when 'objectgroup'
-        data[:object_layers][layer['name'].to_sym] = process_object_layer(layer)
+    data_hash["layers"].each do |layer|
+      case layer["type"]
+      when "tilelayer"
+        data[:tile_layers][layer["name"].to_sym] = process_tile_layer(layer)
+      when "objectgroup"
+        data[:object_layers][layer["name"].to_sym] = process_object_layer(layer)
       end
     end
 
@@ -34,7 +34,7 @@ class Map
   end
 
   def process_tile_layer(layer)
-    tile_ids = layer['data'].each_slice(@width)
+    tile_ids = layer["data"].each_slice(@width)
     tile_ids.each_with_index.map do |row, i|
       row.each_with_index.map do |t, j|
         if t.zero?
@@ -101,19 +101,19 @@ class Map
     diffs = [
       [-1, -1], [0, -1], [1, -1],
       [-1, 0], [0, 0], [1, 0],
-      [-1, 1], [0, 1], [1, 1]
+      [-1, 1], [0, 1], [1, 1],
     ]
 
     diffs.map { |dx, dy| tiles_at(x + dx, y + dy) }.flatten
   end
 
   def teleports
-    @layers[:object_layers][:teleports]['objects'].map do |o|
+    @layers[:object_layers][:teleports]["objects"].map do |o|
       teleport = {
-        x: o['x'],
-        y: o['y']
+        x: o["x"],
+        y: o["y"],
       }
-      o['properties'].each { |p| teleport[p['name'].to_sym] = p['value'] }
+      o["properties"].each { |p| teleport[p["name"].to_sym] = p["value"] }
       teleport
     end
   end

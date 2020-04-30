@@ -12,14 +12,14 @@ class TileStairs < Tile
     @scene.player.physics.set_position(
       teleport[:target_pos_x],
       teleport[:target_pos_y],
-      pixel: true
+      pixel: true,
     )
     @scene.camera.target = @scene.player
   end
 
   def draw(draw_x, draw_y)
     super(draw_x, draw_y)
-    @font.draw_text_rel(debug_text, draw_x + 8, draw_y + 8, 10000, 0.5, 0.5, 1, 1, 0xFF_FFFF00) if $debugging
+    @font.draw_text_rel(debug_text, draw_x + 8, draw_y + 8, 10_000, 0.5, 0.5, 1, 1, 0xFF_FFFF00) if $debugging
   end
 
   private

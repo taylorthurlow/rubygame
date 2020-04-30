@@ -11,7 +11,7 @@ module Utils
   end
 
   def self.media_path(file)
-    File.join(File.dirname(file.dirname(__FILE__)), 'assets', file)
+    File.join(File.dirname(file.dirname(__FILE__)), "assets", file)
   end
 
   def self.frame_delay
@@ -51,7 +51,7 @@ module Utils
   end
 
   def self.distance_between(x1, y1, x2, y2)
-    Math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
+    Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
   end
 
   def self.draw_box(x, y, width, height, color = 0x6F_FF00FF)
@@ -75,9 +75,9 @@ module Utils
   def self.snake_to_pascal_case(str, mode: :class)
     case mode
     when :class
-      str.split('_').map(&:capitalize).join
+      str.split("_").map(&:capitalize).join
     when :method
-      str.split('_').inject { |m, p| m + p.capitalize }
+      str.split("_").inject { |m, p| m + p.capitalize }
     else
       raise "unknown mode #{mode.inspect}"
     end

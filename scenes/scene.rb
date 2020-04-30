@@ -3,7 +3,7 @@ class Scene
 
   def initialize(name, state)
     @name = name
-    @map = Map.new(self, "maps/#{name_without_suffix}.json", 'maps/tileset.json')
+    @map = Map.new(self, "maps/#{name_without_suffix}.json", "maps/tileset.json")
     @object_pool = ObjectPool.new(@map)
     @state = state
   end
@@ -45,7 +45,7 @@ class Scene
   end
 
   def to_s
-    name_without_suffix.split('_').map(&:capitalize).join(' ')
+    name_without_suffix.split("_").map(&:capitalize).join(" ")
   end
 
   def prepare_transition_from(old_scene)
@@ -64,6 +64,6 @@ class Scene
   private
 
   def name_without_suffix
-    @name.delete_suffix('_scene')
+    @name.delete_suffix("_scene")
   end
 end

@@ -53,9 +53,7 @@ class EntityPhysics < Component
        facing_x.positive? &&
        facing_y <= map.height &&
        facing_y.positive?
-      return facing_x, facing_y
-    else
-      return nil
+      [facing_x, facing_y]
     end
   end
 

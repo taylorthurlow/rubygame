@@ -3,8 +3,8 @@ class HumanGraphics < EntityGraphics
     Component.instance_method(:initialize).bind(self).call(game_object)
 
     human_sprites = [
-      'assets/boy.png',
-      'assets/girl.png'
+      "assets/boy.png",
+      "assets/girl.png",
     ]
 
     @sprites = load_sprite(human_sprites.sample)

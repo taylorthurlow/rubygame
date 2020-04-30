@@ -25,9 +25,7 @@ class Component
     pos_y / 16
   end
 
-  def object
-    @object
-  end
+  attr_reader :object
 
   # register with components array
   def object=(obj)

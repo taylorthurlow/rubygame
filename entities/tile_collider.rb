@@ -22,10 +22,10 @@ class TileCollider < Collider
 
   def box
     [
-      @tile.pos_x + @x,          @tile.pos_y + @y,           # top left
+      @tile.pos_x + @x, @tile.pos_y + @y,                    # top left
       @tile.pos_x + @x + @width, @tile.pos_y + @y,           # top right
       @tile.pos_x + @x + @width, @tile.pos_y + @y + @height, # bottom right
-      @tile.pos_x + @x,          @tile.pos_y + @y + @height  # bottom left
+      @tile.pos_x + @x, @tile.pos_y + @y + @height,          # bottom left
     ]
   end
 
@@ -39,9 +39,9 @@ class TileCollider < Collider
   end
 
   def self.new_from_json(collider)
-    TileCollider.new(collider['x'],
-                     collider['y'],
-                     collider['width'],
-                     collider['height'])
+    TileCollider.new(collider["x"],
+                     collider["y"],
+                     collider["width"],
+                     collider["height"])
   end
 end
