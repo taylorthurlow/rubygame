@@ -23,7 +23,7 @@ class EntityCollider < Collider
       @physics.pos_x - @width / 2, @physics.pos_y - @height / 2, # top left
       @physics.pos_x + @width / 2, @physics.pos_y - @height / 2, # top right
       @physics.pos_x + @width / 2, @physics.pos_y + @height / 2, # bottom right
-      @physics.pos_x - @width / 2, @physics.pos_y + @height / 2  # bottom left
+      @physics.pos_x - @width / 2, @physics.pos_y + @height / 2, # bottom left
     ]
   end
 
